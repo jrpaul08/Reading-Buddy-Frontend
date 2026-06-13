@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Secrets / local config (set these as Hugging Face Space Secrets instead)
+.env
+.env.*
+
+# Gradio runtime artifacts
+flagged/
+gradio_cached_examples/
+*.db
+
+# Editor / OS / agent state
+.cursor/
+.DS_Store
+.idea/
+.vscode/
+
+PLAN.md

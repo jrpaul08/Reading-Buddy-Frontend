@@ -7,6 +7,25 @@ const state = {
   chapter: 1,
 };
 
+/* Bind a handler to respond to both touch and click without double-firing.
+   On touch devices the touchend runs immediately; a flag suppresses the
+   browser's subsequent ghost click. */
+function addTap(el, handler) {
+  let touchedAt = 0;
+  el.addEventListener(
+    "touchend",
+    (event) => {
+      touchedAt = Date.now();
+      handler(event);
+    },
+    { passive: true }
+  );
+  el.addEventListener("click", (event) => {
+    if (Date.now() - touchedAt < 500) return;
+    handler(event);
+  });
+}
+
 /* --------------------------------------------------------------------------- */
 /* View navigation                                                             */
 /* --------------------------------------------------------------------------- */
@@ -36,7 +55,7 @@ function renderShelf() {
     const btn = document.createElement("button");
     btn.className = "shelf__book";
     btn.innerHTML = coverMarkup(book);
-    btn.addEventListener("click", () => openDetail(book));
+    addTap(btn, () => openDetail(book));
     row.appendChild(btn);
   });
 }
@@ -209,15 +228,15 @@ async function onMicTap() {
 function init() {
   renderShelf();
 
-  document.getElementById("chapter-prev").addEventListener("click", () => updateChapter(state.chapter - 1));
-  document.getElementById("chapter-next").addEventListener("click", () => updateChapter(state.chapter + 1));
-  document.getElementById("begin-reading").addEventListener("click", openSession);
-  document.getElementById("detail-back").addEventListener("click", () => showView("shelf"));
-  document.getElementById("session-back").addEventListener("click", () => {
+  addTap(document.getElementById("chapter-prev"), () => updateChapter(state.chapter - 1));
+  addTap(document.getElementById("chapter-next"), () => updateChapter(state.chapter + 1));
+  addTap(document.getElementById("begin-reading"), openSession);
+  addTap(document.getElementById("detail-back"), () => showView("shelf"));
+  addTap(document.getElementById("session-back"), () => {
     stopRecording();
     showView("detail");
   });
-  document.getElementById("mic-button").addEventListener("click", onMicTap);
+  addTap(document.getElementById("mic-button"), onMicTap);
 }
 
 init();

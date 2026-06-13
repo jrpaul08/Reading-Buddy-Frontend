@@ -23,6 +23,7 @@
 html,
 body {
   height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -30,14 +31,12 @@ body {
   color: var(--cream);
   background:
     radial-gradient(120% 90% at 50% 38%, var(--bg-glow) 0%, var(--bg-mid) 42%, var(--bg-deep) 100%);
-  background-attachment: fixed;
-  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
 #app {
-  min-height: 100vh;
+  height: 100%;
 }
 
 /* --------------------------------------------------------------------------- */
@@ -45,11 +44,22 @@ body {
 /* --------------------------------------------------------------------------- */
 .view {
   display: none;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
   flex-direction: column;
   align-items: center;
-  padding: clamp(2rem, 6vh, 5rem) 1.5rem 3rem;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vh, 3rem) clamp(1.25rem, 4vw, 2rem);
   animation: fade-in 0.7s ease both;
+}
+
+/* Generous, delay-free touch targets across all interactive elements */
+button,
+.shelf__book {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .view.is-active {
@@ -70,17 +80,6 @@ body {
 /* --------------------------------------------------------------------------- */
 /* Shared typography                                                           */
 /* --------------------------------------------------------------------------- */
-.eyebrow {
-  font-family: var(--serif-display);
-  font-style: italic;
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  font-size: 0.78rem;
-  color: var(--gold-soft);
-  margin: 0.4rem 0 1.6rem;
-  padding-left: 0.35em;
-}
-
 .label-caps {
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -89,20 +88,11 @@ body {
   font-weight: 500;
 }
 
-.display-title {
-  font-family: var(--serif-display);
-  font-weight: 500;
-  font-size: clamp(2.4rem, 6vw, 4rem);
-  line-height: 1.08;
-  color: var(--cream);
-  letter-spacing: 0.01em;
-}
-
 /* Landing hero - "Reading Buddy" is the dominant element on the page */
 .brand-title {
   font-family: var(--serif-display);
   font-weight: 600;
-  font-size: clamp(3.4rem, 9.5vw, 6.5rem);
+  font-size: clamp(2.8rem, 6.5vw, 5rem);
   line-height: 1;
   letter-spacing: 0.015em;
   color: var(--cream);
@@ -113,11 +103,11 @@ body {
   font-family: var(--serif-display);
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(1.25rem, 3.2vw, 2rem);
+  font-size: clamp(1.15rem, 2.6vw, 1.7rem);
   line-height: 1.25;
   letter-spacing: 0.01em;
   color: var(--gold-soft);
-  margin: 1.1rem auto 0;
+  margin: 1rem auto 0;
   max-width: 30rem;
 }
 
@@ -137,8 +127,8 @@ body {
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  width: min(420px, 70vw);
-  margin: 1.4rem auto;
+  width: min(26rem, 70vw);
+  margin: 1.1rem auto;
   color: var(--gold-deep);
 }
 
@@ -161,17 +151,12 @@ body {
 /* --------------------------------------------------------------------------- */
 /* VIEW 1: Shelf                                                               */
 /* --------------------------------------------------------------------------- */
-.view--shelf {
-  justify-content: space-between;
-}
-
 .shelf__intro {
   text-align: center;
-  margin-top: clamp(1rem, 4vh, 3rem);
 }
 
 .shelf__label {
-  margin: auto auto 1.5rem;
+  margin: clamp(2rem, 6vh, 4.5rem) auto 1.25rem;
   font-size: clamp(1rem, 1.8vw, 1.3rem);
   letter-spacing: 0.38em;
   color: var(--cream-soft);
@@ -180,9 +165,9 @@ body {
 /* Bookshelf frame: gold top rail + side posts + a wooden ledge the books rest on */
 .shelf__case {
   position: relative;
-  width: min(1120px, 96vw);
+  width: min(50rem, 92vw);
   margin: 0 auto;
-  padding: clamp(1.2rem, 3vw, 2.2rem) clamp(1rem, 3vw, 2.4rem) 0;
+  padding: clamp(0.85rem, 2vw, 1.4rem) clamp(1rem, 3vw, 2rem) 0;
   border-top: 2px solid rgba(34, 22, 13, 0.8);
   border-left: 2px solid rgba(34, 22, 13, 0.8);
   border-right: 2px solid rgba(34, 22, 13, 0.8);
@@ -190,21 +175,9 @@ body {
   background: linear-gradient(180deg, rgba(38, 25, 15, 0.4), rgba(26, 17, 10, 0.2));
 }
 
-.shelf__case::before {
-  content: "\10086";
-  position: absolute;
-  top: -0.72rem;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 0 0.6rem;
-  font-size: 0.7rem;
-  color: var(--gold-soft);
-  background: var(--bg-mid);
-}
-
 .shelf__row {
   display: flex;
-  gap: clamp(0.9rem, 2vw, 1.8rem);
+  gap: clamp(0.7rem, 1.6vw, 1.3rem);
   align-items: flex-end;
   justify-content: center;
   flex-wrap: nowrap;
@@ -213,7 +186,7 @@ body {
 
 /* The wooden plank the volumes sit on */
 .shelf__ledge {
-  height: 20px;
+  height: 1.25rem;
   margin: 0 calc(-1 * clamp(1rem, 3vw, 2.4rem));
   border-top: 1px solid rgba(211, 154, 68, 0.4);
   border-radius: 0 0 8px 8px;
@@ -228,8 +201,8 @@ body {
 /* --------------------------------------------------------------------------- */
 .book-cover {
   position: relative;
-  width: 132px;
-  height: 196px;
+  width: 8.25rem;
+  aspect-ratio: 141 / 211;
   border-radius: 4px;
   overflow: hidden;
   background: #1c130d;
@@ -264,18 +237,32 @@ body {
 }
 
 .shelf__book .book-cover {
-  width: clamp(132px, 17vw, 200px);
-  height: clamp(198px, 25.5vw, 300px);
+  width: clamp(6.5rem, 9.5vw, 9.5rem);
 }
 
-.shelf__book:hover,
-.shelf__book:focus-visible {
-  transform: translateY(-12px);
+/* Lift on pointer hover (desktop) and on tap/focus (touch + keyboard) */
+@media (hover: hover) {
+  .shelf__book:hover {
+    transform: translateY(-0.75rem);
+    filter: brightness(1.08);
+  }
+
+  .shelf__book:hover .book-cover {
+    box-shadow:
+      0 0 0 1px rgba(211, 154, 68, 0.45),
+      0 22px 40px rgba(0, 0, 0, 0.55);
+  }
+}
+
+.shelf__book:focus-visible,
+.shelf__book:active {
+  transform: translateY(-0.75rem);
   filter: brightness(1.08);
   outline: none;
 }
 
-.shelf__book:hover .book-cover {
+.shelf__book:focus-visible .book-cover,
+.shelf__book:active .book-cover {
   box-shadow:
     0 0 0 1px rgba(211, 154, 68, 0.45),
     0 22px 40px rgba(0, 0, 0, 0.55);
@@ -319,8 +306,7 @@ body {
 
 .detail__head .book-cover {
   flex: none;
-  width: 96px;
-  height: 142px;
+  width: 6rem;
 }
 
 .detail__title {
@@ -355,13 +341,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2.2rem;
+  gap: clamp(1.5rem, 5vw, 2.2rem);
   margin: 0.2rem 0 1.8rem;
 }
 
 .stepper__btn {
-  width: 44px;
-  height: 44px;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
   border: 1px solid var(--line);
   background: transparent;
@@ -373,13 +359,17 @@ body {
   transition: border-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
 }
 
-.stepper__btn:hover {
-  border-color: var(--gold-soft);
-  color: var(--gold);
+@media (hover: hover) {
+  .stepper__btn:hover {
+    border-color: var(--gold-soft);
+    color: var(--gold);
+  }
 }
 
 .stepper__btn:active {
   transform: scale(0.92);
+  border-color: var(--gold-soft);
+  color: var(--gold);
 }
 
 .stepper__value {
@@ -395,6 +385,7 @@ body {
 /* --------------------------------------------------------------------------- */
 .btn-primary {
   width: 100%;
+  min-height: 3.25rem;
   padding: 1rem 1.5rem;
   border: none;
   border-radius: 6px;
@@ -410,9 +401,11 @@ body {
   box-shadow: 0 12px 26px rgba(154, 106, 38, 0.35);
 }
 
-.btn-primary:hover {
-  filter: brightness(1.06);
-  box-shadow: 0 16px 32px rgba(154, 106, 38, 0.5);
+@media (hover: hover) {
+  .btn-primary:hover {
+    filter: brightness(1.06);
+    box-shadow: 0 16px 32px rgba(154, 106, 38, 0.5);
+  }
 }
 
 .btn-primary:active {
@@ -420,28 +413,35 @@ body {
 }
 
 .link-back {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
   background: none;
   border: none;
   color: var(--muted);
   font-family: var(--serif-body);
-  font-size: 0.95rem;
+  font-size: 1rem;
   letter-spacing: 0.05em;
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
-.link-back:hover {
+@media (hover: hover) {
+  .link-back:hover {
+    color: var(--cream-soft);
+  }
+}
+
+.link-back:active {
   color: var(--cream-soft);
+}
+
+.btn-primary {
+  min-height: 3.25rem;
 }
 
 /* --------------------------------------------------------------------------- */
 /* VIEW 3: Reading session                                                     */
 /* --------------------------------------------------------------------------- */
-.view--session {
-  justify-content: center;
-}
-
 .session__head {
   text-align: center;
 }
@@ -466,14 +466,15 @@ body {
   color: var(--gold-soft);
 }
 
-/* Mic orb */
+/* Mic orb - dominant, square, and capped by both width and height so the
+   session screen fits the viewport without scrolling */
 .mic {
   position: relative;
-  width: 300px;
-  height: 300px;
+  width: min(80vw, 20rem, 42vh);
+  aspect-ratio: 1;
   display: grid;
   place-items: center;
-  margin: clamp(2rem, 6vh, 4rem) 0;
+  margin: clamp(1.25rem, 3.5vh, 2.5rem) 0;
 }
 
 .mic__ring {
@@ -484,20 +485,22 @@ body {
 }
 
 .mic__ring--outer {
-  width: 300px;
-  height: 300px;
+  width: 100%;
+  height: 100%;
 }
 
 .mic__ring--mid {
-  width: 230px;
-  height: 230px;
+  width: 77%;
+  height: 77%;
   border-color: rgba(196, 160, 110, 0.26);
 }
 
 .mic__button {
   position: relative;
-  width: 158px;
-  height: 158px;
+  width: 53%;
+  height: 53%;
+  min-width: 9rem;
+  min-height: 9rem;
   border-radius: 50%;
   border: 1px solid rgba(211, 154, 68, 0.4);
   cursor: pointer;
@@ -512,16 +515,22 @@ body {
   transition: transform 0.3s ease, box-shadow 0.4s ease, color 0.3s ease;
 }
 
-.mic__button:hover {
-  transform: scale(1.03);
-  box-shadow:
-    0 0 70px rgba(211, 154, 68, 0.3),
-    inset 0 0 36px rgba(211, 154, 68, 0.18);
+@media (hover: hover) {
+  .mic__button:hover {
+    transform: scale(1.03);
+    box-shadow:
+      0 0 70px rgba(211, 154, 68, 0.3),
+      inset 0 0 36px rgba(211, 154, 68, 0.18);
+  }
+}
+
+.mic__button:active {
+  transform: scale(0.97);
 }
 
 .mic__icon {
-  width: 46px;
-  height: 46px;
+  width: 30%;
+  height: auto;
 }
 
 .session__status {
@@ -533,7 +542,7 @@ body {
 }
 
 .session__footer {
-  margin-top: clamp(2rem, 6vh, 4rem);
+  margin-top: clamp(1.25rem, 3vh, 2rem);
 }
 
 /* Mic states ---------------------------------------------------------------- */
@@ -597,17 +606,80 @@ body {
 }
 
 /* --------------------------------------------------------------------------- */
-/* Responsive                                                                  */
+/* Responsive - MOBILE (targets iPhone widths ~390px)                          */
 /* --------------------------------------------------------------------------- */
-@media (max-width: 600px) {
+@media (max-width: 480px) {
+  /* On phones the content (a stacked shelf) is taller than the viewport, so
+     let the page flow and scroll from the top instead of locking to 100vh.
+     Otherwise the centered content overflows and clips the header. */
+  html,
+  body {
+    height: auto;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  #app {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .view {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+    justify-content: flex-start;
+  }
+
+  /* Shelf: stack volumes into a single centered column */
+  .shelf__row {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .shelf__book .book-cover {
+    width: min(58vw, 13rem);
+    height: auto;
+  }
+
+  /* A column doesn't rest on one plank - soften the ledge into a base rail */
+  .shelf__ledge {
+    height: 0.5rem;
+  }
+
+  .shelf__case {
+    padding-top: 1.5rem;
+  }
+
+  /* Keep the hero prominent but prevent overflow on narrow screens */
+  .brand-title {
+    font-size: clamp(2.5rem, 13vw, 3.6rem);
+  }
+
   .detail__head {
     flex-direction: column;
     text-align: center;
     align-items: center;
   }
 
+  .detail__card {
+    text-align: center;
+  }
+
   .author-rail {
-    font-size: 0.74rem;
+    font-size: 0.78rem;
+    gap: 1rem 1.4rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Bigger, easier chapter stepper targets on touch */
+  .stepper__btn {
+    width: 3.25rem;
+    height: 3.25rem;
+    font-size: 1.6rem;
   }
 }
 

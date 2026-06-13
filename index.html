@@ -44,7 +44,7 @@
 
       <!-- ===================== VIEW 2: SESSION SETUP ======================== -->
       <section class="view view--session-setup" data-view="session-setup">
-        <h1 class="setup__brand">Reading Buddy</h1>
+        <h1 class="setup__brand">READING BUDDY</h1>
         <div class="ornament">
           <span class="ornament__line"></span>
           <span class="ornament__dot">※</span>
@@ -81,17 +81,23 @@
         <button class="link-back" id="setup-back">&lsaquo; Back to the shelf</button>
       </section>
 
-      <!-- ======================== VIEW 3: READING SESSION ====================== -->
-      <section class="view view--session" data-view="session">
-        <header class="session__head">
-          <p class="session__author" id="session-author"></p>
-          <h2 class="session__title" id="session-title"></h2>
+      <!-- ==================== VIEW 3: READING SESSION ====================== -->
+      <section class="view view--reading-session" data-view="reading-session">
+        <header class="reading-session__head">
+          <p class="reading-session__author" id="reading-session-author"></p>
+          <h2 class="reading-session__title" id="reading-session-title"></h2>
           <div class="ornament ornament--labeled">
             <span class="ornament__line"></span>
-            <span class="label-caps" id="session-chapter"></span>
+            <span class="label-caps" id="reading-session-chapter"></span>
             <span class="ornament__line"></span>
           </div>
         </header>
+
+        <div class="reading-session__chapter-control">
+          <button class="reading-session__chapter-btn" id="session-chapter-prev" aria-label="Previous chapter">&lsaquo;</button>
+          <span class="reading-session__chapter-num" id="session-chapter-num">1</span>
+          <button class="reading-session__chapter-btn" id="session-chapter-next" aria-label="Next chapter">&rsaquo;</button>
+        </div>
 
         <div class="mic" id="mic" data-state="idle">
           <span class="mic__ring mic__ring--outer"></span>
@@ -109,15 +115,15 @@
           </button>
         </div>
 
-        <p class="session__status" id="session-status">Tap to ask a question</p>
+        <p class="reading-session__status" id="reading-session-status">Tap to ask a question</p>
 
-        <div class="ornament session__footer">
+        <div class="ornament reading-session__footer">
           <span class="ornament__line"></span>
-          <span class="ornament__dot">&#10086;</span>
+          <img src="/icons/book_icon.png" alt="" class="ornament__icon" aria-hidden="true" />
           <span class="ornament__line"></span>
         </div>
 
-        <button class="link-back" id="session-back">&lsaquo; Leave session</button>
+        <button class="link-back" id="reading-session-back">&lsaquo; Leave session</button>
 
         <audio id="answer-audio" hidden></audio>
       </section>

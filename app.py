@@ -131,6 +131,9 @@ app = Server()
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 app.mount("/covers", StaticFiles(directory=str(COVERS_DIR)), name="covers")
 
+ICONS_DIR = APP_DIR / "assets" / "icons"
+app.mount("/icons", StaticFiles(directory=str(ICONS_DIR)), name="icons")
+
 
 @app.api(name="ask")
 def ask(audio: FileData, book_id: str, chapter: int) -> FileData:

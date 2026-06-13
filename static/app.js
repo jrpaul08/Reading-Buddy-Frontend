@@ -121,19 +121,35 @@ function updateChapter(value) {
   const max = state.book ? state.book.chapters : 1;
   state.chapter = Math.min(Math.max(1, value), max);
   document.getElementById("chapter-value").textContent = state.chapter;
+  
+  // Also update reading session display if it exists
+  const sessionChapterEl = document.getElementById("reading-session-chapter");
+  const sessionChapterNumEl = document.getElementById("session-chapter-num");
+  if (sessionChapterEl) {
+    sessionChapterEl.textContent = `Chapter ${state.chapter}`;
+  }
+  if (sessionChapterNumEl) {
+    sessionChapterNumEl.textContent = state.chapter;
+  }
+  
   saveState();
 }
 
 /* --------------------------------------------------------------------------- */
 /* VIEW 3: Reading session                                                     */
 /* --------------------------------------------------------------------------- */
-function openSession() {
+function openReadingSession() {
   const book = state.book;
-  document.getElementById("session-author").textContent = book.author;
-  document.getElementById("session-title").textContent = book.title;
-  document.getElementById("session-chapter").textContent = `Chapter ${state.chapter}`;
+  document.getElementById("reading-session-author").textContent = book.author;
+  document.getElementById("reading-session-title").textContent = book.title;
+  updateReadingSessionChapter();
   setMicState("idle", "Tap to ask a question");
-  showView("session");
+  showView("reading-session");
+}
+
+function updateReadingSessionChapter() {
+  document.getElementById("reading-session-chapter").textContent = `Chapter ${state.chapter}`;
+  document.getElementById("session-chapter-num").textContent = state.chapter;
 }
 
 const STATUS_TEXT = {
@@ -146,7 +162,7 @@ const STATUS_TEXT = {
 
 function setMicState(micState, statusOverride) {
   document.getElementById("mic").dataset.state = micState;
-  document.getElementById("session-status").textContent =
+  document.getElementById("reading-session-status").textContent =
     statusOverride ?? STATUS_TEXT[micState] ?? "";
 }
 
@@ -267,14 +283,14 @@ function init() {
     document.getElementById("chapter-value").textContent = state.chapter;
     showView("session-setup", false);
     history.replaceState({ view: "session-setup" }, "", "#session-setup");
-  } else if (hasState && hash === "session" && state.book) {
-    // Restore session view with saved book
-    document.getElementById("session-author").textContent = state.book.author;
-    document.getElementById("session-title").textContent = state.book.title;
-    document.getElementById("session-chapter").textContent = `Chapter ${state.chapter}`;
+  } else if (hasState && hash === "reading-session" && state.book) {
+    // Restore reading-session view with saved book
+    document.getElementById("reading-session-author").textContent = state.book.author;
+    document.getElementById("reading-session-title").textContent = state.book.title;
+    updateReadingSessionChapter();
     setMicState("idle", "Tap to ask a question");
-    showView("session", false);
-    history.replaceState({ view: "session" }, "", "#session");
+    showView("reading-session", false);
+    history.replaceState({ view: "reading-session" }, "", "#reading-session");
   } else {
     // Default to shelf
     showView("shelf", false);
@@ -283,9 +299,11 @@ function init() {
 
   addTap(document.getElementById("chapter-prev"), () => updateChapter(state.chapter - 1));
   addTap(document.getElementById("chapter-next"), () => updateChapter(state.chapter + 1));
-  addTap(document.getElementById("begin-reading"), openSession);
+  addTap(document.getElementById("begin-reading"), openReadingSession);
   addTap(document.getElementById("setup-back"), () => showView("shelf"));
-  addTap(document.getElementById("session-back"), () => {
+  addTap(document.getElementById("session-chapter-prev"), () => updateChapter(state.chapter - 1));
+  addTap(document.getElementById("session-chapter-next"), () => updateChapter(state.chapter + 1));
+  addTap(document.getElementById("reading-session-back"), () => {
     stopRecording();
     showView("session-setup");
   });

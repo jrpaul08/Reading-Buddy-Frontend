@@ -144,6 +144,13 @@ button,
   opacity: 0.8;
 }
 
+.ornament__icon {
+  width: 1.8rem;
+  height: 1.8rem;
+  opacity: 0.7;
+  filter: brightness(0) saturate(100%) invert(72%) sepia(13%) saturate(965%) hue-rotate(357deg) brightness(90%) contrast(85%);
+}
+
 .ornament--labeled .label-caps {
   white-space: nowrap;
 }
@@ -447,11 +454,11 @@ button,
 /* --------------------------------------------------------------------------- */
 /* VIEW 3: Reading session                                                     */
 /* --------------------------------------------------------------------------- */
-.session__head {
+.reading-session__head {
   text-align: center;
 }
 
-.session__author {
+.reading-session__author {
   font-family: var(--serif-display);
   font-style: italic;
   font-size: 1.05rem;
@@ -459,7 +466,7 @@ button,
   margin-bottom: 0.4rem;
 }
 
-.session__title {
+.reading-session__title {
   font-family: var(--serif-display);
   font-weight: 500;
   font-size: clamp(2.2rem, 6vw, 3.4rem);
@@ -467,8 +474,64 @@ button,
   line-height: 1.1;
 }
 
-.session__chapter {
+.reading-session__chapter {
   color: var(--gold-soft);
+}
+
+/* Make the chapter ornament/divider larger and more prominent */
+.reading-session__head .ornament {
+  margin: 1rem auto;
+  width: min(32rem, 80vw);
+}
+
+.reading-session__head .ornament .label-caps {
+  font-size: 0.95rem;
+  letter-spacing: 0.35em;
+}
+
+/* Chapter controls in reading session */
+.reading-session__chapter-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.reading-session__chapter-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--cream-soft);
+  font-family: var(--serif-display);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+@media (hover: hover) {
+  .reading-session__chapter-btn:hover {
+    border-color: var(--gold-soft);
+    color: var(--gold);
+  }
+}
+
+.reading-session__chapter-btn:active {
+  transform: scale(0.92);
+  border-color: var(--gold-soft);
+  color: var(--gold);
+}
+
+.reading-session__chapter-num {
+  font-family: var(--serif-display);
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--cream);
+  min-width: 2rem;
+  text-align: center;
 }
 
 /* Mic orb - dominant, square, and capped by both width and height so the
@@ -538,7 +601,7 @@ button,
   height: auto;
 }
 
-.session__status {
+.reading-session__status {
   font-size: 1.18rem;
   font-style: italic;
   color: var(--cream-soft);
@@ -546,7 +609,7 @@ button,
   transition: color 0.3s ease;
 }
 
-.session__footer {
+.reading-session__footer {
   margin-top: clamp(1.25rem, 3vh, 2rem);
 }
 

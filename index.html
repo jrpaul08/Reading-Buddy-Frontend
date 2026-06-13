@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reading Buddy</title>
+    <title>READING BUDDY</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -22,7 +22,7 @@
             <span class="ornament__dot">&#10086;</span>
             <span class="ornament__line"></span>
           </div>
-          <h1 class="brand-title">Reading Buddy</h1>
+          <h1 class="brand-title">READING BUDDY</h1>
           <p class="shelf__tagline">The Quiet Companion That Reads Alongside You</p>
           <p class="lede">
             Choose a volume from the shelf and begin your reading session. When
@@ -42,28 +42,32 @@
         </div>
       </section>
 
-      <!-- ========================= VIEW 2: BOOK DETAIL ========================= -->
-      <section class="view view--detail" data-view="detail">
-        <nav class="author-rail" id="author-rail"><!-- author names injected --></nav>
+      <!-- ===================== VIEW 2: SESSION SETUP ======================== -->
+      <section class="view view--session-setup" data-view="session-setup">
+        <h1 class="setup__brand">Reading Buddy</h1>
+        <div class="ornament">
+          <span class="ornament__line"></span>
+          <span class="ornament__dot">※</span>
+          <span class="ornament__line"></span>
+        </div>
 
-        <div class="detail__card">
-          <div class="detail__head">
-            <div class="book-cover" id="detail-cover"></div>
-            <div class="detail__meta">
-              <h2 class="detail__title" id="detail-title"></h2>
-              <p class="detail__byline" id="detail-byline"></p>
-              <p class="label-caps detail__chapters" id="detail-chapters"></p>
+        <div class="setup__card">
+          <div class="setup__head">
+            <div class="book-cover" id="setup-cover"></div>
+            <div class="setup__meta">
+              <h2 class="setup__title" id="setup-title"></h2>
+              <p class="setup__byline" id="setup-byline"></p>
+              <p class="label-caps setup__chapters" id="setup-chapters"></p>
             </div>
           </div>
 
           <div class="ornament ornament--labeled">
             <span class="ornament__line"></span>
-            <span class="label-caps">Your Place</span>
+            <span class="label-caps">Currently Reading</span>
             <span class="ornament__line"></span>
           </div>
 
-          <p class="detail__reading">Currently reading</p>
-          <p class="label-caps detail__chapter-label">Chapter</p>
+          <p class="setup__chapter-label">Chapter</p>
 
           <div class="stepper">
             <button class="stepper__btn" id="chapter-prev" aria-label="Previous chapter">&lsaquo;</button>
@@ -74,7 +78,7 @@
           <button class="btn-primary" id="begin-reading">Begin Reading</button>
         </div>
 
-        <button class="link-back" id="detail-back">&lsaquo; Back to the shelf</button>
+        <button class="link-back" id="setup-back">&lsaquo; Back to the shelf</button>
       </section>
 
       <!-- ======================== VIEW 3: READING SESSION ====================== -->

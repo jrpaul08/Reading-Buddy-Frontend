@@ -139,7 +139,7 @@ button,
 }
 
 .ornament__dot {
-  font-size: 0.7rem;
+  font-size: 1rem;
   color: var(--gold-soft);
   opacity: 0.8;
 }
@@ -270,25 +270,23 @@ button,
 }
 
 /* --------------------------------------------------------------------------- */
-/* VIEW 2: Book detail                                                         */
+/* VIEW 2: Session Setup                                                       */
 /* --------------------------------------------------------------------------- */
-.author-rail {
-  display: flex;
-  gap: clamp(1.2rem, 4vw, 3.4rem);
-  justify-content: center;
-  flex-wrap: wrap;
+.setup__brand {
   font-family: var(--serif-display);
-  font-style: italic;
-  font-size: 0.82rem;
-  color: var(--muted);
-  margin-bottom: clamp(2rem, 8vh, 4rem);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  color: var(--gold-soft);
+  text-align: center;
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.02em;
 }
 
-.author-rail__name.is-current {
-  color: var(--cream-soft);
+.setup__brand + .ornament {
+  margin-bottom: clamp(2rem, 6vh, 3.5rem);
 }
 
-.detail__card {
+.setup__card {
   width: min(560px, 100%);
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -298,19 +296,19 @@ button,
   text-align: center;
 }
 
-.detail__head {
+.setup__head {
   display: flex;
   gap: 1.5rem;
   align-items: center;
   text-align: left;
 }
 
-.detail__head .book-cover {
+.setup__head .book-cover {
   flex: none;
   width: 6rem;
 }
 
-.detail__title {
+.setup__title {
   font-family: var(--serif-display);
   font-weight: 500;
   font-size: clamp(1.6rem, 4vw, 2.2rem);
@@ -318,21 +316,27 @@ button,
   color: var(--cream);
 }
 
-.detail__byline {
+.setup__byline {
   font-style: italic;
   font-size: 1.05rem;
   color: var(--cream-soft);
   margin: 0.4rem 0 0.7rem;
 }
 
-.detail__reading {
-  font-size: 1.05rem;
-  color: var(--cream-soft);
+.setup__reading {
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 500;
   margin-top: 0.4rem;
 }
 
-.detail__chapter-label {
+.setup__chapter-label {
+  font-size: 1.5rem;
+  color: var(--cream-soft);
   margin: 0.9rem 0 0.3rem;
+  font-weight: 500;
 }
 
 /* --------------------------------------------------------------------------- */
@@ -660,20 +664,14 @@ button,
     font-size: clamp(2.5rem, 13vw, 3.6rem);
   }
 
-  .detail__head {
+  .setup__head {
     flex-direction: column;
     text-align: center;
     align-items: center;
   }
 
-  .detail__card {
+  .setup__card {
     text-align: center;
-  }
-
-  .author-rail {
-    font-size: 0.78rem;
-    gap: 1rem 1.4rem;
-    margin-bottom: 2rem;
   }
 
   /* Bigger, easier chapter stepper targets on touch */

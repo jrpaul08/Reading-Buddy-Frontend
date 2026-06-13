@@ -7,6 +7,36 @@ const state = {
   chapter: 1,
 };
 
+/* --------------------------------------------------------------------------- */
+/* State persistence                                                           */
+/* --------------------------------------------------------------------------- */
+function saveState() {
+  if (state.book) {
+    localStorage.setItem("reading-buddy-state", JSON.stringify({
+      bookId: state.book.id,
+      chapter: state.chapter,
+    }));
+  }
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem("reading-buddy-state");
+    if (saved) {
+      const data = JSON.parse(saved);
+      const book = BOOKS.find(b => b.id === data.bookId);
+      if (book) {
+        state.book = book;
+        state.chapter = data.chapter || 1;
+        return true;
+      }
+    }
+  } catch (e) {
+    console.warn("Failed to load saved state:", e);
+  }
+  return false;
+}
+
 /* Bind a handler to respond to both touch and click without double-firing.
    On touch devices the touchend runs immediately; a flag suppresses the
    browser's subsequent ghost click. */
@@ -29,12 +59,22 @@ function addTap(el, handler) {
 /* --------------------------------------------------------------------------- */
 /* View navigation                                                             */
 /* --------------------------------------------------------------------------- */
-function showView(name) {
+function showView(name, pushHistory = true) {
   document.querySelectorAll(".view").forEach((view) => {
     view.classList.toggle("is-active", view.dataset.view === name);
   });
   window.scrollTo({ top: 0, behavior: "smooth" });
+  
+  if (pushHistory) {
+    history.pushState({ view: name }, "", `#${name}`);
+  }
 }
+
+// Handle browser back/forward buttons
+window.addEventListener("popstate", (event) => {
+  const view = event.state?.view || "shelf";
+  showView(view, false);
+});
 
 /* --------------------------------------------------------------------------- */
 /* Cover rendering - uses the supplied JPEG art served from /covers            */
@@ -55,47 +95,33 @@ function renderShelf() {
     const btn = document.createElement("button");
     btn.className = "shelf__book";
     btn.innerHTML = coverMarkup(book);
-    addTap(btn, () => openDetail(book));
+    addTap(btn, () => openSetup(book));
     row.appendChild(btn);
   });
 }
 
 /* --------------------------------------------------------------------------- */
-/* VIEW 2: Book detail                                                         */
+/* VIEW 2: Session Setup                                                       */
 /* --------------------------------------------------------------------------- */
-function renderAuthorRail(currentBook) {
-  const rail = document.getElementById("author-rail");
-  const seen = new Set();
-  rail.innerHTML = "";
-  BOOKS.forEach((book) => {
-    if (seen.has(book.author)) return;
-    seen.add(book.author);
-    const span = document.createElement("span");
-    span.className = "author-rail__name";
-    span.textContent = book.author;
-    if (book.author === currentBook.author) span.classList.add("is-current");
-    rail.appendChild(span);
-  });
-}
-
-function openDetail(book) {
+function openSetup(book) {
   state.book = book;
   state.chapter = 1;
+  saveState();
 
-  renderAuthorRail(book);
-  document.getElementById("detail-cover").outerHTML = coverMarkup(book, { id: "detail-cover" });
-  document.getElementById("detail-title").textContent = book.title;
-  document.getElementById("detail-byline").textContent = `${book.author} \u00b7 ${book.year}`;
-  document.getElementById("detail-chapters").textContent = `${book.chapters} Chapters`;
+  document.getElementById("setup-cover").outerHTML = coverMarkup(book, { id: "setup-cover" });
+  document.getElementById("setup-title").textContent = book.title;
+  document.getElementById("setup-byline").textContent = `${book.author} \u00b7 ${book.year}`;
+  document.getElementById("setup-chapters").textContent = `${book.chapters} Chapters`;
   updateChapter(1);
 
-  showView("detail");
+  showView("session-setup");
 }
 
 function updateChapter(value) {
   const max = state.book ? state.book.chapters : 1;
   state.chapter = Math.min(Math.max(1, value), max);
   document.getElementById("chapter-value").textContent = state.chapter;
+  saveState();
 }
 
 /* --------------------------------------------------------------------------- */
@@ -227,14 +253,41 @@ async function onMicTap() {
 /* --------------------------------------------------------------------------- */
 function init() {
   renderShelf();
+  
+  // Try to restore saved state and view
+  const hash = window.location.hash.slice(1);
+  const hasState = loadState();
+  
+  if (hasState && hash === "session-setup" && state.book) {
+    // Restore session-setup view with saved book
+    document.getElementById("setup-cover").outerHTML = coverMarkup(state.book, { id: "setup-cover" });
+    document.getElementById("setup-title").textContent = state.book.title;
+    document.getElementById("setup-byline").textContent = `${state.book.author} \u00b7 ${state.book.year}`;
+    document.getElementById("setup-chapters").textContent = `${state.book.chapters} Chapters`;
+    document.getElementById("chapter-value").textContent = state.chapter;
+    showView("session-setup", false);
+    history.replaceState({ view: "session-setup" }, "", "#session-setup");
+  } else if (hasState && hash === "session" && state.book) {
+    // Restore session view with saved book
+    document.getElementById("session-author").textContent = state.book.author;
+    document.getElementById("session-title").textContent = state.book.title;
+    document.getElementById("session-chapter").textContent = `Chapter ${state.chapter}`;
+    setMicState("idle", "Tap to ask a question");
+    showView("session", false);
+    history.replaceState({ view: "session" }, "", "#session");
+  } else {
+    // Default to shelf
+    showView("shelf", false);
+    history.replaceState({ view: "shelf" }, "", "#shelf");
+  }
 
   addTap(document.getElementById("chapter-prev"), () => updateChapter(state.chapter - 1));
   addTap(document.getElementById("chapter-next"), () => updateChapter(state.chapter + 1));
   addTap(document.getElementById("begin-reading"), openSession);
-  addTap(document.getElementById("detail-back"), () => showView("shelf"));
+  addTap(document.getElementById("setup-back"), () => showView("shelf"));
   addTap(document.getElementById("session-back"), () => {
     stopRecording();
-    showView("detail");
+    showView("session-setup");
   });
   addTap(document.getElementById("mic-button"), onMicTap);
 }

@@ -666,6 +666,7 @@ button,
 
 .mic[data-state="playing"] .mic__button {
   color: #f2d9a6;
+  cursor: pointer;
 }
 
 .mic[data-state="ready-to-play"] .mic__ring {

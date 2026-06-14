@@ -156,15 +156,26 @@ const STATUS_TEXT = {
   idle: "Tap to ask a question",
   recording: "Listening\u2026 tap again when finished",
   processing: "Thinking\u2026",
-  playing: "Speaking\u2026",
+  playing: "Speaking\u2026 tap to stop",
   "ready-to-play": "Tap to hear the answer",
   error: "Something went quiet. Tap to try again.",
+};
+
+const MIC_LABELS = {
+  idle: "Tap to ask a question",
+  recording: "Tap when finished speaking",
+  processing: "Thinking",
+  playing: "Tap to stop the answer",
+  "ready-to-play": "Tap to hear the answer",
+  error: "Tap to try again",
 };
 
 function setMicState(micState, statusOverride) {
   document.getElementById("mic").dataset.state = micState;
   document.getElementById("reading-session-status").textContent =
     statusOverride ?? STATUS_TEXT[micState] ?? "";
+  document.getElementById("mic-button").ariaLabel =
+    MIC_LABELS[micState] ?? MIC_LABELS.idle;
 }
 
 /* --------------------------------------------------------------------------- */
@@ -174,6 +185,20 @@ let gradioClient = null;
 let mediaRecorder = null;
 let recordedChunks = [];
 let pendingAnswerUrl = null;
+let activePlayResolve = null;
+
+function stopAnswer() {
+  const audio = document.getElementById("answer-audio");
+  audio.pause();
+  audio.currentTime = 0;
+  pendingAnswerUrl = null;
+  setMicState("idle");
+  if (activePlayResolve) {
+    const resolve = activePlayResolve;
+    activePlayResolve = null;
+    resolve();
+  }
+}
 
 function resolveAudioUrl(answer) {
   const raw =
@@ -244,12 +269,16 @@ function playAnswer(url) {
   const audio = document.getElementById("answer-audio");
 
   return new Promise((resolve) => {
+    activePlayResolve = resolve;
+
     audio.onended = () => {
+      activePlayResolve = null;
       pendingAnswerUrl = null;
       setMicState("idle");
       resolve();
     };
     audio.onerror = () => {
+      activePlayResolve = null;
       console.error("Audio playback failed:", audio.error);
       pendingAnswerUrl = resolved;
       setMicState("ready-to-play");
@@ -259,6 +288,7 @@ function playAnswer(url) {
     audio.src = resolved;
     setMicState("playing");
     audio.play().catch((err) => {
+      activePlayResolve = null;
       // After a long Modal round-trip the original tap gesture is gone, so
       // browsers block autoplay — keep the URL and let the user tap to play.
       console.warn("Autoplay blocked, waiting for tap:", err);
@@ -271,7 +301,12 @@ function playAnswer(url) {
 
 async function onMicTap() {
   const micState = document.getElementById("mic").dataset.state;
-  if (micState === "processing" || micState === "playing") return;
+  if (micState === "processing") return;
+
+  if (micState === "playing") {
+    stopAnswer();
+    return;
+  }
 
   if (micState === "ready-to-play" && pendingAnswerUrl) {
     await playAnswer(pendingAnswerUrl);
@@ -333,6 +368,7 @@ function init() {
   addTap(document.getElementById("session-chapter-next"), () => updateChapter(state.chapter + 1));
   addTap(document.getElementById("reading-session-back"), () => {
     stopRecording();
+    stopAnswer();
     showView("session-setup");
   });
   addTap(document.getElementById("mic-button"), onMicTap);

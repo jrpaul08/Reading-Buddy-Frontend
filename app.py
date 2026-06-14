@@ -78,6 +78,9 @@ BOOKS_BY_ID = {book["id"]: book for book in BOOKS}
 # --------------------------------------------------------------------------- #
 MODAL_ENDPOINT_URL = os.environ.get("MODAL_ENDPOINT_URL")
 MODAL_API_TOKEN = os.environ.get("MODAL_API_TOKEN")
+# Voice-to-voice on Modal (transcribe + LLM + TTS) often exceeds 2 minutes on cold start.
+MODAL_READ_TIMEOUT = float(os.environ.get("MODAL_READ_TIMEOUT", "600"))
+MODAL_HTTP_TIMEOUT = httpx.Timeout(30.0, read=MODAL_READ_TIMEOUT)
 
 
 def call_modal(audio_path: str, book: dict, chapter: int) -> str:
@@ -105,7 +108,7 @@ def call_modal(audio_path: str, book: dict, chapter: int) -> str:
             headers=headers,
             files=files,
             data=data,
-            timeout=120.0,
+            timeout=MODAL_HTTP_TIMEOUT,
         )
     response.raise_for_status()
 
@@ -135,7 +138,7 @@ ICONS_DIR = APP_DIR / "assets" / "icons"
 app.mount("/icons", StaticFiles(directory=str(ICONS_DIR)), name="icons")
 
 
-@app.api(name="ask")
+@app.api(name="ask", time_limit=int(MODAL_READ_TIMEOUT))
 def ask(audio: FileData, book_id: str, chapter: int) -> FileData:
     """Receive a recorded question + reading context, return spoken answer audio.
 
@@ -145,7 +148,8 @@ def ask(audio: FileData, book_id: str, chapter: int) -> FileData:
     JS client receives a playable URL.
     """
     book = BOOKS_BY_ID.get(book_id, {"id": book_id, "title": book_id, "author": ""})
-    answer_path = call_modal(audio["path"], book, chapter)
+    audio_path = audio["path"] if isinstance(audio, dict) else audio.path
+    answer_path = call_modal(audio_path, book, chapter)
     return FileData(path=answer_path)
 
 

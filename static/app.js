@@ -157,6 +157,7 @@ const STATUS_TEXT = {
   recording: "Listening\u2026 tap again when finished",
   processing: "Thinking\u2026",
   playing: "Speaking\u2026",
+  "ready-to-play": "Tap to hear the answer",
   error: "Something went quiet. Tap to try again.",
 };
 
@@ -172,6 +173,15 @@ function setMicState(micState, statusOverride) {
 let gradioClient = null;
 let mediaRecorder = null;
 let recordedChunks = [];
+let pendingAnswerUrl = null;
+
+function resolveAudioUrl(answer) {
+  const raw =
+    typeof answer === "string" ? answer : answer?.url || answer?.path || null;
+  if (!raw) return null;
+  if (raw.startsWith("http") || raw.startsWith("/")) return raw;
+  return `/gradio_api/file=${raw}`;
+}
 
 async function getClient() {
   if (!gradioClient) {
@@ -216,8 +226,9 @@ async function sendQuestion(blob) {
       chapter: state.chapter,
     });
 
-    const answer = result.data[0];
-    const url = answer?.url || answer?.path;
+    const outputs = result?.data ?? result;
+    const answer = Array.isArray(outputs) ? outputs[0] : outputs;
+    const url = resolveAudioUrl(answer);
     if (!url) throw new Error("No audio returned from backend");
 
     await playAnswer(url);
@@ -228,20 +239,30 @@ async function sendQuestion(blob) {
 }
 
 function playAnswer(url) {
+  const resolved = resolveAudioUrl(url);
+  const audio = document.getElementById("answer-audio");
+
   return new Promise((resolve) => {
-    const audio = document.getElementById("answer-audio");
-    audio.src = url;
-    setMicState("playing");
     audio.onended = () => {
+      pendingAnswerUrl = null;
       setMicState("idle");
       resolve();
     };
     audio.onerror = () => {
-      setMicState("error");
+      console.error("Audio playback failed:", audio.error);
+      pendingAnswerUrl = resolved;
+      setMicState("ready-to-play");
       resolve();
     };
-    audio.play().catch(() => {
-      setMicState("error");
+
+    audio.src = resolved;
+    setMicState("playing");
+    audio.play().catch((err) => {
+      // After a long Modal round-trip the original tap gesture is gone, so
+      // browsers block autoplay — keep the URL and let the user tap to play.
+      console.warn("Autoplay blocked, waiting for tap:", err);
+      pendingAnswerUrl = resolved;
+      setMicState("ready-to-play");
       resolve();
     });
   });
@@ -251,11 +272,17 @@ async function onMicTap() {
   const micState = document.getElementById("mic").dataset.state;
   if (micState === "processing" || micState === "playing") return;
 
+  if (micState === "ready-to-play" && pendingAnswerUrl) {
+    await playAnswer(pendingAnswerUrl);
+    return;
+  }
+
   if (micState === "recording") {
     stopRecording();
     return;
   }
 
+  pendingAnswerUrl = null;
   try {
     await startRecording();
   } catch (err) {

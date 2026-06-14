@@ -668,6 +668,14 @@ button,
   color: #f2d9a6;
 }
 
+.mic[data-state="ready-to-play"] .mic__ring {
+  animation: pulse-ring 2.6s ease-out infinite;
+}
+
+.mic[data-state="ready-to-play"] .mic__button {
+  color: #f2d9a6;
+}
+
 .mic[data-state="error"] .mic__button {
   border-color: rgba(180, 90, 70, 0.6);
   color: #d99;

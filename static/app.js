@@ -220,6 +220,7 @@ async function sendQuestion(blob) {
   try {
     const file = new File([blob], "question.webm", { type: blob.type || "audio/webm" });
     const client = await getClient();
+    console.info("[ask] sending chapter=%s book_id=%s", state.chapter, state.book.id);
     const result = await client.predict("/ask", {
       audio: handle_file(file),
       book_id: state.book.id,

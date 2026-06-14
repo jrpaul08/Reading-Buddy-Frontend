@@ -103,6 +103,10 @@ def call_modal(audio_path: str, book: dict, chapter: int) -> str:
             "author": book["author"],
             "chapter": str(chapter),
         }
+        print(
+            f"[call_modal] multipart form data: book_id={data['book_id']!r} chapter={data['chapter']!r}",
+            flush=True,
+        )
         response = httpx.post(
             MODAL_ENDPOINT_URL,
             headers=headers,
@@ -149,6 +153,10 @@ def ask(audio: FileData, book_id: str, chapter: int) -> FileData:
     """
     book = BOOKS_BY_ID.get(book_id, {"id": book_id, "title": book_id, "author": ""})
     audio_path = audio["path"] if isinstance(audio, dict) else audio.path
+    print(
+        f"[ask] received chapter={chapter} (type={type(chapter).__name__}) book_id={book_id!r}",
+        flush=True,
+    )
     answer_path = call_modal(audio_path, book, chapter)
     return FileData(path=answer_path)
 

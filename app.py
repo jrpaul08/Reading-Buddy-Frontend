@@ -33,7 +33,7 @@ INDEX_HTML = APP_DIR / "index.html"
 # --------------------------------------------------------------------------- #
 BOOKS = [
     {
-        "id": "crime-and-punishment",
+        "id": "crime_and_punishment",
         "title": "Crime and Punishment",
         "author": "Fyodor Dostoevsky",
         "year": "1866",
@@ -41,7 +41,7 @@ BOOKS = [
         "cover": "C&P.jpeg",
     },
     {
-        "id": "the-idiot",
+        "id": "the_idiot",
         "title": "The Idiot",
         "author": "Fyodor Dostoevsky",
         "year": "1869",
@@ -49,7 +49,7 @@ BOOKS = [
         "cover": "TheIdiot.jpeg",
     },
     {
-        "id": "the-count-of-monte-cristo",
+        "id": "the_count_of_monte_cristo",
         "title": "The Count of Monte Cristo",
         "author": "Alexandre Dumas",
         "year": "1846",
@@ -57,7 +57,7 @@ BOOKS = [
         "cover": "TCOMC.jpeg",
     },
     {
-        "id": "pride-and-prejudice",
+        "id": "pride_and_prejudice",
         "title": "Pride and Prejudice",
         "author": "Jane Austen",
         "year": "1813",

@@ -13,6 +13,13 @@ tags:
   - badge-off-brand
   - badge-field-notes
   - badge-sharing-is-caring
+  - track:backyard
+  - sponsor:openbmb
+  - sponsor:modal
+  - achievement:offgrid
+  - achievement:offbrand
+  - achievement:sharing
+  - achievement:fieldnotes
 models:
   - openbmb/MiniCPM-o-2_6
 ---

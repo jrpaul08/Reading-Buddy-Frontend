@@ -1,14 +1,29 @@
 ---
-title: Reading Buddy Frontend
-emoji: 🐨
-colorFrom: pink
-colorTo: indigo
+title: Reading Buddy
+emoji: 📚
+colorFrom: amber
+colorTo: brown
 sdk: gradio
 sdk_version: 6.18.0
-python_version: '3.13'
 app_file: app.py
 pinned: false
-short_description: frontend for my AI reading assistance application
+tags:
+  - hackathon-buildsmall
+  - track-backyard-ai
+  - badge-off-brand
+  - badge-field-notes
+  - badge-sharing-is-caring
+models:
+  - openbmb/MiniCPM-o-2_6
 ---
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+# Reading Buddy
+
+A voice AI reading companion for classic literature. Select your book, set your chapter, speak your question, and hear a spoiler-free answer without breaking your reading flow.
+
+**Model:** MiniCPM-O 4.5 by OpenBMB handles the full speech-to-speech pipeline
+**Inference:** Powered by Modal
+**Spoiler prevention:** Architectural — the model only receives chapters you have already read
+
+**Demo:** https://www.loom.com/share/8b38b7381a6d4f8288d7e3bd54ac8c12
+**Social post:** [https://x.com/Jrpaul_08/status/2066658537904759271]

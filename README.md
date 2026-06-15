@@ -34,3 +34,4 @@ A voice AI reading companion for classic literature. Select your book, set your 
 
 **Demo:** https://www.loom.com/share/8b38b7381a6d4f8288d7e3bd54ac8c12
 **Social post:** [https://x.com/Jrpaul_08/status/2066658537904759271]
+**Blog post:** https://huggingface.co/blog/jrpaul08/reading-buddy

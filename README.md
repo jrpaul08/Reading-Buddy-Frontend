@@ -1,8 +1,8 @@
 ---
 title: Reading Buddy
 emoji: 📚
-colorFrom: amber
-colorTo: brown
+colorFrom: yellow
+colorTo: gray
 sdk: gradio
 sdk_version: 6.18.0
 app_file: app.py

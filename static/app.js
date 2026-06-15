@@ -154,7 +154,7 @@ function updateReadingSessionChapter() {
 
 const STATUS_TEXT = {
   idle: "Tap to ask a question",
-  recording: "Listening\u2026 tap again when finished",
+  recording: "Listening\u2026 tap mic when finished",
   processing: "Thinking\u2026",
   playing: "Speaking\u2026 tap to stop",
   "ready-to-play": "Tap to hear the answer",
@@ -176,6 +176,7 @@ function setMicState(micState, statusOverride) {
     statusOverride ?? STATUS_TEXT[micState] ?? "";
   document.getElementById("mic-button").ariaLabel =
     MIC_LABELS[micState] ?? MIC_LABELS.idle;
+  document.getElementById("cancel-recording").hidden = micState !== "recording";
 }
 
 /* --------------------------------------------------------------------------- */
@@ -184,6 +185,7 @@ function setMicState(micState, statusOverride) {
 let gradioClient = null;
 let mediaRecorder = null;
 let recordedChunks = [];
+let recordingDiscarded = false;
 let pendingAnswerUrl = null;
 let activePlayResolve = null;
 
@@ -216,6 +218,7 @@ async function getClient() {
 }
 
 async function startRecording() {
+  recordingDiscarded = false;
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   recordedChunks = [];
   mediaRecorder = new MediaRecorder(stream);
@@ -226,7 +229,14 @@ async function startRecording() {
 
   mediaRecorder.addEventListener("stop", () => {
     stream.getTracks().forEach((track) => track.stop());
+    if (recordingDiscarded) {
+      recordedChunks = [];
+      mediaRecorder = null;
+      setMicState("idle");
+      return;
+    }
     const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
+    mediaRecorder = null;
     sendQuestion(blob);
   });
 
@@ -236,6 +246,14 @@ async function startRecording() {
 
 function stopRecording() {
   if (mediaRecorder && mediaRecorder.state === "recording") {
+    recordingDiscarded = false;
+    mediaRecorder.stop();
+  }
+}
+
+function cancelRecording() {
+  if (mediaRecorder && mediaRecorder.state === "recording") {
+    recordingDiscarded = true;
     mediaRecorder.stop();
   }
 }
@@ -367,10 +385,11 @@ function init() {
   addTap(document.getElementById("session-chapter-prev"), () => updateChapter(state.chapter - 1));
   addTap(document.getElementById("session-chapter-next"), () => updateChapter(state.chapter + 1));
   addTap(document.getElementById("reading-session-back"), () => {
-    stopRecording();
+    cancelRecording();
     stopAnswer();
     showView("session-setup");
   });
+  addTap(document.getElementById("cancel-recording"), cancelRecording);
   addTap(document.getElementById("mic-button"), onMicTap);
 }
 

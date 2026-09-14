@@ -16,7 +16,7 @@ import tempfile
 from pathlib import Path
 
 import httpx
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from gradio import Server
 from gradio.data_classes import FileData
@@ -82,6 +82,19 @@ MODAL_API_TOKEN = os.environ.get("MODAL_API_TOKEN")
 MODAL_READ_TIMEOUT = float(os.environ.get("MODAL_READ_TIMEOUT", "600"))
 MODAL_HTTP_TIMEOUT = httpx.Timeout(30.0, read=MODAL_READ_TIMEOUT)
 
+# Dedicated Modal endpoint whose only job is to force the (GPU) container to load
+# if it's cold and return once ready, so the reader's first question is fast.
+# It does no real inference work. Set to an empty string to disable warm-up.
+MODAL_WARMUP_URL = os.environ.get(
+    "MODAL_WARMUP_URL",
+    "https://pauljared48--reading-buddy-readingcompanion-warmup-endpoint.modal.run",
+)
+# A cold container takes ~25-40s to load; allow generous read headroom. The
+# browser enforces its own shorter cap and proceeds regardless (see app.js).
+MODAL_WARMUP_TIMEOUT = httpx.Timeout(
+    30.0, read=float(os.environ.get("MODAL_WARMUP_READ_TIMEOUT", "120"))
+)
+
 
 def call_modal(audio_path: str, book: dict, chapter: int) -> str:
     """Send the reader's recorded question to Modal and return a path to the
@@ -107,12 +120,15 @@ def call_modal(audio_path: str, book: dict, chapter: int) -> str:
             f"[call_modal] multipart form data: book_id={data['book_id']!r} chapter={data['chapter']!r}",
             flush=True,
         )
+        # Modal can answer a slow call with a 303 redirect to a result URL, so
+        # follow redirects rather than treating the 303 as a failure.
         response = httpx.post(
             MODAL_ENDPOINT_URL,
             headers=headers,
             files=files,
             data=data,
             timeout=MODAL_HTTP_TIMEOUT,
+            follow_redirects=True,
         )
     response.raise_for_status()
 
@@ -159,6 +175,48 @@ def ask(audio: FileData, book_id: str, chapter: int) -> FileData:
     )
     answer_path = call_modal(audio_path, book, chapter)
     return FileData(path=answer_path)
+
+
+@app.post("/warmup")
+async def warmup() -> JSONResponse:
+    """Nudge the Modal container awake so the reader's first spoken question is
+    fast instead of eating the 25-40s cold-start delay.
+
+    The frontend calls this once when a reading session begins. This is
+    intentionally best-effort: on success we report the warm container, and on
+    any failure/timeout we still return HTTP 200 with a non-ready status so the
+    UI proceeds to the reading session unchanged. Worst case is identical to
+    today (a slow first question), never an error screen.
+    """
+    if not MODAL_WARMUP_URL:
+        # Warm-up disabled (e.g. local dev / mock mode): report ready instantly.
+        return JSONResponse({"status": "ready"})
+
+    try:
+        # follow_redirects handles Modal's 303-while-busy behavior on slow calls.
+        async with httpx.AsyncClient(
+            follow_redirects=True, timeout=MODAL_WARMUP_TIMEOUT
+        ) as client:
+            response = await client.post(MODAL_WARMUP_URL)
+
+        if response.status_code == 200:
+            try:
+                payload = response.json()
+            except ValueError:
+                payload = {}
+            status = payload.get("status", "ready")
+            print(f"[warmup] modal container ready (status={status!r})", flush=True)
+            return JSONResponse({"status": status})
+
+        print(
+            f"[warmup] modal warm-up returned HTTP {response.status_code}; "
+            "proceeding without warm confirmation",
+            flush=True,
+        )
+    except Exception as exc:  # noqa: BLE001 - warm-up must never surface an error
+        print(f"[warmup] failed ({type(exc).__name__}: {exc}); proceeding", flush=True)
+
+    return JSONResponse({"status": "unavailable"})
 
 
 def _asset_version() -> str:

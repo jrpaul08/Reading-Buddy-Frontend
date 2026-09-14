@@ -81,6 +81,44 @@
         <button class="link-back" id="setup-back">&lsaquo; Back to the shelf</button>
       </section>
 
+      <!-- ===================== VIEW 2.5: WARMING UP ========================= -->
+      <section class="view view--warming" data-view="warming">
+        <h1 class="setup__brand">READING BUDDY</h1>
+        <div class="ornament ornament--labeled">
+          <span class="ornament__line"></span>
+          <span class="label-caps">Preparing Your Session</span>
+          <span class="ornament__line"></span>
+        </div>
+
+        <div class="warming__stage" aria-hidden="true">
+          <div class="warming__glow"></div>
+          <div class="bookanim">
+            <span class="bookanim__cover bookanim__cover--left"></span>
+            <span class="bookanim__cover bookanim__cover--right"></span>
+            <span class="bookanim__page bookanim__page--left"></span>
+            <span class="bookanim__page bookanim__page--right"></span>
+            <span class="bookanim__page bookanim__page--flip bookanim__page--flip-1"></span>
+            <span class="bookanim__page bookanim__page--flip bookanim__page--flip-2"></span>
+            <span class="bookanim__page bookanim__page--flip bookanim__page--flip-3"></span>
+          </div>
+        </div>
+
+        <p class="warming__title" id="warming-title">Setting the scene&hellip;</p>
+        <p class="warming__status" id="warming-status" aria-live="polite">
+          Lighting the reading lamp&hellip;
+        </p>
+
+        <div
+          class="warming__meter"
+          role="progressbar"
+          aria-label="Preparing your reading session"
+        >
+          <span class="warming__meter-fill"></span>
+        </div>
+
+        <p class="warming__note">This will take 1-2 mins.</p>
+      </section>
+
       <!-- ==================== VIEW 3: READING SESSION ====================== -->
       <section class="view view--reading-session" data-view="reading-session">
         <header class="reading-session__head">

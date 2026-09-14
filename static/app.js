@@ -167,7 +167,7 @@ function startWarmingMessages() {
   const statusEl = document.getElementById("warming-status");
   const titleEl = document.getElementById("warming-title");
   if (titleEl && state.book) {
-    titleEl.textContent = `Preparing ${state.book.title}`;
+    titleEl.textContent = state.book.title;
   }
   if (!statusEl) return;
 

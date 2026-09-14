@@ -7,6 +7,17 @@ const state = {
   chapter: 1,
 };
 
+/* Warm-up tuning ------------------------------------------------------------ */
+/* The Modal backend scales down after ~10 min idle and takes ~25-40s to reload.
+   We trigger that reload when a session begins so the first question is fast. */
+const WARM_TTL_MS = 8 * 60 * 1000; // skip warm-up if warmed within this window
+const WARMUP_MAX_MS = 60 * 1000; // stop waiting and enter the session regardless
+const WARM_MIN_MS = 900; // let the loading screen breathe / avoid a jarring flash
+
+let lastWarmedAt = 0; // timestamp of the last confirmed-warm backend contact
+let warmingInFlight = false; // guards against double taps on "Begin Reading"
+let warmingStatusTimer = null;
+
 /* --------------------------------------------------------------------------- */
 /* State persistence                                                           */
 /* --------------------------------------------------------------------------- */
@@ -133,6 +144,136 @@ function updateChapter(value) {
   }
   
   saveState();
+}
+
+/* --------------------------------------------------------------------------- */
+/* VIEW 2.5: Warming up the backend                                            */
+/* --------------------------------------------------------------------------- */
+
+/* Rotating, book-themed reassurances shown while the model container loads.    */
+function warmingMessages() {
+  const title = state.book ? state.book.title : "your book";
+  return [
+    "Lighting the reading lamp\u2026",
+    `Pulling ${title} from the shelf\u2026`,
+    `Turning to chapter ${state.chapter}\u2026`,
+    "Marking your place\u2026",
+    "Preparing spoiler-free answers\u2026",
+    "Almost ready\u2026",
+  ];
+}
+
+function startWarmingMessages() {
+  const statusEl = document.getElementById("warming-status");
+  const titleEl = document.getElementById("warming-title");
+  if (titleEl && state.book) {
+    titleEl.textContent = `Preparing ${state.book.title}`;
+  }
+  if (!statusEl) return;
+
+  const messages = warmingMessages();
+  let index = 0;
+  statusEl.style.opacity = "1";
+  statusEl.textContent = messages[0];
+
+  stopWarmingMessages();
+  warmingStatusTimer = setInterval(() => {
+    index = (index + 1) % messages.length;
+    statusEl.style.opacity = "0";
+    setTimeout(() => {
+      statusEl.textContent = messages[index];
+      statusEl.style.opacity = "1";
+    }, 350);
+  }, 2600);
+}
+
+function stopWarmingMessages() {
+  if (warmingStatusTimer) {
+    clearInterval(warmingStatusTimer);
+    warmingStatusTimer = null;
+  }
+}
+
+/* Best-effort: ping the backend so it spins the model up. Resolves on ready,
+   failure, or timeout - the caller proceeds to the session either way, so a
+   failed warm-up is never worse than today's slow first question. */
+async function warmUpModel() {
+  const start = Date.now();
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), WARMUP_MAX_MS);
+    const response = await fetch("/warmup", {
+      method: "POST",
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+
+    if (response.ok) {
+      const data = await response.json().catch(() => null);
+      if (data && data.status === "ready") {
+        lastWarmedAt = Date.now();
+        console.info("[warmup] backend reported ready");
+      } else {
+        console.info("[warmup] backend not confirmed ready; proceeding anyway");
+      }
+    }
+  } catch (err) {
+    // Aborted, timed out, or network error - proceed to the session regardless.
+    console.warn("[warmup] proceeding without warm confirmation:", err);
+  }
+
+  // Avoid a jarring one-frame flash of the loading screen when it resolves fast.
+  const elapsed = Date.now() - start;
+  if (elapsed < WARM_MIN_MS) {
+    await new Promise((resolve) => setTimeout(resolve, WARM_MIN_MS - elapsed));
+  }
+}
+
+/* Dev-only: preview the loading page without touching Modal (no cold start, no
+   cost). Open the app at "#warming-preview" to land here. It shows the real
+   loading screen with its animation + rotating messages and never auto-advances,
+   so you can iterate on the UI freely; remove the hash and reload to exit. */
+function enterWarmingPreview() {
+  if (!state.book) {
+    state.book = BOOKS[0] || null;
+    state.chapter = 1;
+  }
+  showView("warming", false);
+  startWarmingMessages();
+  history.replaceState({ view: "warming" }, "", "#warming-preview");
+  console.info(
+    "[preview] Loading page preview - no container started. " +
+      "Remove #warming-preview from the URL and reload to exit."
+  );
+}
+
+/* Entry point for the "Begin Reading" button. */
+async function beginReading() {
+  if (warmingInFlight) return;
+
+  // Warmed recently? The container is still up - go straight in, no artificial wait.
+  if (lastWarmedAt && Date.now() - lastWarmedAt < WARM_TTL_MS) {
+    openReadingSession();
+    return;
+  }
+
+  warmingInFlight = true;
+  showView("warming", false);
+  startWarmingMessages();
+  try {
+    await warmUpModel();
+  } finally {
+    stopWarmingMessages();
+    warmingInFlight = false;
+  }
+
+  // Only advance if the user is still on the warming screen (didn't navigate away).
+  const warmingActive = document
+    .querySelector(".view--warming")
+    ?.classList.contains("is-active");
+  if (warmingActive) {
+    openReadingSession();
+  }
 }
 
 /* --------------------------------------------------------------------------- */
@@ -275,6 +416,10 @@ async function sendQuestion(blob) {
     const url = resolveAudioUrl(answer);
     if (!url) throw new Error("No audio returned from backend");
 
+    // A successful answer means the container is warm; refresh the warm-up TTL
+    // so re-entering a session won't trigger a needless (billable) warm-up.
+    lastWarmedAt = Date.now();
+
     await playAnswer(url);
   } catch (err) {
     console.error("Reading Buddy ask failed:", err);
@@ -355,7 +500,10 @@ function init() {
   const hash = window.location.hash.slice(1);
   const hasState = loadState();
   
-  if (hasState && hash === "session-setup" && state.book) {
+  if (hash === "warming-preview") {
+    // Dev preview of the loading page - no backend call, no container spin-up.
+    enterWarmingPreview();
+  } else if (hasState && hash === "session-setup" && state.book) {
     // Restore session-setup view with saved book
     document.getElementById("setup-cover").outerHTML = coverMarkup(state.book, { id: "setup-cover" });
     document.getElementById("setup-title").textContent = state.book.title;
@@ -380,7 +528,7 @@ function init() {
 
   addTap(document.getElementById("chapter-prev"), () => updateChapter(state.chapter - 1));
   addTap(document.getElementById("chapter-next"), () => updateChapter(state.chapter + 1));
-  addTap(document.getElementById("begin-reading"), openReadingSession);
+  addTap(document.getElementById("begin-reading"), beginReading);
   addTap(document.getElementById("setup-back"), () => showView("shelf"));
   addTap(document.getElementById("session-chapter-prev"), () => updateChapter(state.chapter - 1));
   addTap(document.getElementById("session-chapter-next"), () => updateChapter(state.chapter + 1));

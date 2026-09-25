@@ -14,3 +14,13 @@ createRoot(document.getElementById("root")!).render(
     </BrowserRouter>
   </StrictMode>
 );
+
+// Register the service worker only in production builds, so dev hot-reload is
+// never served stale from cache.
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {
+      /* PWA is a progressive enhancement; ignore registration failures. */
+    });
+  });
+}

@@ -87,12 +87,13 @@ MODAL_HTTP_TIMEOUT = httpx.Timeout(30.0, read=MODAL_READ_TIMEOUT)
 # It does no real inference work. Set to an empty string to disable warm-up.
 MODAL_WARMUP_URL = os.environ.get(
     "MODAL_WARMUP_URL",
-    "https://pauljared48--reading-buddy-readingcompanion-warmup-endpoint.modal.run",
+    "https://pauljared48--reading-buddy-pipeline-orchestrator-warmup--123417.modal.run",
 )
-# A cold container takes ~25-40s to load; allow generous read headroom. The
-# browser enforces its own shorter cap and proceeds regardless (see app.js).
+# The warm-up spins up a 3-container GPU pipeline: ~78-110s cold, ~5-9s warm.
+# Allow generous read headroom; the browser enforces its own cap and proceeds
+# regardless (see app.js).
 MODAL_WARMUP_TIMEOUT = httpx.Timeout(
-    30.0, read=float(os.environ.get("MODAL_WARMUP_READ_TIMEOUT", "120"))
+    30.0, read=float(os.environ.get("MODAL_WARMUP_READ_TIMEOUT", "150"))
 )
 
 

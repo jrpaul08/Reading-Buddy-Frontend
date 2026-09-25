@@ -8,10 +8,10 @@ const state = {
 };
 
 /* Warm-up tuning ------------------------------------------------------------ */
-/* The Modal backend scales down after ~10 min idle and takes ~25-40s to reload.
-   We trigger that reload when a session begins so the first question is fast. */
+/* The Modal backend is a 3-container GPU pipeline: ~78-110s cold, ~5-9s warm.
+   We trigger the warm-up when a session begins so the first question is fast. */
 const WARM_TTL_MS = 8 * 60 * 1000; // skip warm-up if warmed within this window
-const WARMUP_MAX_MS = 60 * 1000; // stop waiting and enter the session regardless
+const WARMUP_MAX_MS = 135 * 1000; // stop waiting and enter the session regardless
 const WARM_MIN_MS = 900; // let the loading screen breathe / avoid a jarring flash
 
 let lastWarmedAt = 0; // timestamp of the last confirmed-warm backend contact

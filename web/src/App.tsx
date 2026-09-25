@@ -1,33 +1,12 @@
-import { Routes, Route, Navigate, Link } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import ShelfScreen from "./screens/ShelfScreen";
 import SessionSetupScreen from "./screens/SessionSetupScreen";
 import WarmingScreen from "./screens/WarmingScreen";
+import ReadingSessionScreen from "./screens/ReadingSessionScreen";
 
-/* Placeholder pages for views we haven't built yet. Each becomes a real screen
-   in a later iteration (Reading Session). */
-function Placeholder({ title, next }: { title: string; next?: string }) {
-  return (
-    <section className="view is-active">
-      <div className="shelf__intro">
-        <h1 className="brand-title">{title}</h1>
-        <p className="lede">Placeholder page — real content lands in a later iteration.</p>
-        {next && (
-          <p className="lede">
-            <Link className="link-back" to={next}>
-              Go to {next} &rsaquo;
-            </Link>
-          </p>
-        )}
-        <p className="lede">
-          <Link className="link-back" to="/">
-            &lsaquo; Back to the shelf
-          </Link>
-        </p>
-      </div>
-    </section>
-  );
-}
-
+/* Client-side routing. Each view is its own page/URL, but they all live under
+   one SessionProvider (see main.tsx) so the warm-up we start doesn't reset when
+   the route changes. */
 export default function App() {
   return (
     <main id="app">
@@ -35,7 +14,7 @@ export default function App() {
         <Route path="/" element={<ShelfScreen />} />
         <Route path="/setup/:bookId" element={<SessionSetupScreen />} />
         <Route path="/warming" element={<WarmingScreen />} />
-        <Route path="/session" element={<Placeholder title="Reading Session" />} />
+        <Route path="/session" element={<ReadingSessionScreen />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </main>

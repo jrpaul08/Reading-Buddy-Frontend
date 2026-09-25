@@ -19,6 +19,8 @@ type SessionValue = {
   chapter: number;
   /** Set the active book + chapter (called from the setup page). */
   start: (book: Book, chapter: number) => void;
+  /** Update just the chapter (called from the reading session controls). */
+  setChapter: (chapter: number) => void;
   /** Record that the backend is confirmed warm right now. */
   markWarm: () => void;
   /** True if we warmed recently enough to skip a fresh warm-up. */
@@ -50,7 +52,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo<SessionValue>(
-    () => ({ book, chapter, start, markWarm, isWarm }),
+    () => ({ book, chapter, start, setChapter, markWarm, isWarm }),
     [book, chapter, start, markWarm, isWarm]
   );
 

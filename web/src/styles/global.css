@@ -526,9 +526,25 @@ button,
   font-size: 1.12rem;
   color: var(--gold-soft);
   text-align: center;
-  min-height: 1.6em;
+  /* Reserve two lines and add side padding so a longer message that wraps on a
+     narrow phone can't overlap the title above or the meter below. */
+  min-height: 2.8em;
+  padding: 0 1rem;
   margin-top: 0.5rem;
-  transition: opacity 0.35s ease;
+  /* Each message is a freshly-mounted element (key=status), so this fade-in
+     replays per message. No JS/CSS timing race, no text overlap. */
+  animation: warming-status-in 0.45s ease both;
+}
+
+@keyframes warming-status-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .warming__meter {
@@ -652,13 +668,16 @@ button,
   left: -0.22rem;
   border-radius: 11px 2px 2px 11px;
   transform-origin: right center;
-  transform: rotateY(10deg);
+  /* translateZ pushes the cover behind the page on its own 3D plane. Without
+     it, iOS Safari can paint the red cover on top of the cream page (coplanar
+     z-fighting), leaving one side of the book solid red. */
+  transform: rotateY(10deg) translateZ(-4px);
 }
 .bookanim__cover--right {
   right: -0.22rem;
   border-radius: 2px 11px 11px 2px;
   transform-origin: left center;
-  transform: rotateY(-10deg);
+  transform: rotateY(-10deg) translateZ(-4px);
 }
 
 /* --------------------------------------------------------------------------- */

@@ -30,7 +30,6 @@ export default function WarmingScreen() {
 
   const title = book?.title ?? "your book";
   const [status, setStatus] = useState("Lighting the reading lamp\u2026");
-  const [statusVisible, setStatusVisible] = useState(true);
 
   // No active book (e.g. deep-linked here directly): send back to the shelf,
   // unless we're just previewing the animation.
@@ -38,19 +37,17 @@ export default function WarmingScreen() {
     if (!book && !isPreview) navigate("/", { replace: true });
   }, [book, isPreview, navigate]);
 
-  // Rotating status messages.
+  // Rotating status messages. We just swap the current message on a single
+  // timer; the fade-in is handled purely in CSS by keying the element (see the
+  // render below), which avoids racing a JS timer against a CSS transition —
+  // the source of the overlap/stutter on iOS Safari.
   useEffect(() => {
     const messages = warmingMessages(title, chapter);
     let index = 0;
     setStatus(messages[0]);
-    setStatusVisible(true);
     const interval = setInterval(() => {
       index = (index + 1) % messages.length;
-      setStatusVisible(false); // fade out
-      setTimeout(() => {
-        setStatus(messages[index]);
-        setStatusVisible(true); // fade back in
-      }, 350);
+      setStatus(messages[index]);
     }, 2600);
     return () => clearInterval(interval);
   }, [title, chapter]);
@@ -104,7 +101,9 @@ export default function WarmingScreen() {
       </div>
 
       <p className="warming__title">{title}</p>
-      <p className="warming__status" aria-live="polite" style={{ opacity: statusVisible ? 1 : 0 }}>
+      {/* key={status} makes React mount a fresh element per message, so the CSS
+          fade-in animation replays cleanly and old/new text never coexist. */}
+      <p className="warming__status" key={status} aria-live="polite">
         {status}
       </p>
 

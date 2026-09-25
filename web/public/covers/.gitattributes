@@ -1,0 +1,5 @@
+# Override the repo-root LFS rule for these web assets. The book covers are
+# small (~0.5 MB) and must be committed as normal git blobs so static hosts
+# (e.g. Vercel) serve the real image instead of a 131-byte LFS pointer.
+*.jpeg -filter -diff -merge text=auto
+*.jpg -filter -diff -merge text=auto

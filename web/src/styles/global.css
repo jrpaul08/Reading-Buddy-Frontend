@@ -447,8 +447,113 @@ button,
   color: var(--cream-soft);
 }
 
-.btn-primary {
-  min-height: 3.25rem;
+.setup__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.setup__actions .btn-primary {
+  flex: 1;
+  width: auto;
+}
+
+.notes-btn {
+  width: 3.6rem;
+  height: 3.6rem;
+  flex: none;
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  background: rgba(211, 154, 68, 0.08);
+  color: var(--gold);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.notes-btn img {
+  width: 1.7rem;
+  height: 1.7rem;
+  display: block;
+  filter: invert(72%) sepia(38%) saturate(620%) hue-rotate(2deg) brightness(98%);
+}
+
+.notes-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(12, 8, 6, 0.72);
+}
+
+.notes-modal__card {
+  width: min(22rem, 100%);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.35rem 1.15rem 0.6rem;
+  background: #2a1c15;
+}
+
+.notes-modal__card .ornament {
+  width: 100%;
+  margin-top: 0;
+}
+
+.notes-modal__tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.35rem;
+}
+
+.notes-tile {
+  min-height: 4.6rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.6rem 0.3rem;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--serif-body);
+  font-size: 1.05rem;
+}
+
+.notes-tile small {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--gold-soft);
+}
+
+.notes-tile--ready {
+  border-color: var(--gold);
+  color: var(--cream);
+  cursor: pointer;
+}
+
+.notes-tile:disabled {
+  cursor: default;
+}
+
+.notes-modal__close {
+  width: 100%;
+  margin-top: 0.4rem;
+}
+
+.view--questions {
+  justify-content: flex-start;
+  overflow: auto;
+}
+
+.questions__list {
+  width: min(26rem, 100%);
+}
+
+.questions__empty {
+  text-align: center;
+  font-style: italic;
+  color: var(--cream-soft);
+  line-height: 1.4;
 }
 
 /* --------------------------------------------------------------------------- */
@@ -1014,6 +1119,32 @@ button,
 
   .setup__card {
     text-align: center;
+  }
+
+  /* Keep Begin Reading on one line next to the notes icon */
+  .setup__actions .btn-primary {
+    letter-spacing: 0.16em;
+    font-size: 0.88rem;
+    padding-left: 0.65rem;
+    padding-right: 0.65rem;
+  }
+
+  .notes-btn {
+    width: 3.25rem;
+    height: 3.25rem;
+  }
+
+  .notes-modal {
+    padding:
+      max(1rem, env(safe-area-inset-top, 0px))
+      max(1rem, env(safe-area-inset-right, 0px))
+      max(1rem, env(safe-area-inset-bottom, 0px))
+      max(1rem, env(safe-area-inset-left, 0px));
+  }
+
+  .notes-tile {
+    font-size: 0.98rem;
+    min-height: 4.2rem;
   }
 
   /* Bigger, easier chapter stepper targets on touch */

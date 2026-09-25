@@ -1,12 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { BOOKS_BY_ID, coverUrl } from "../data/books";
 import { useSession } from "../session/SessionContext";
 
-/* VIEW 2: session setup. Shows the chosen book and a chapter stepper, then
-   sends the reader on to the warming screen. The book id comes from the URL
-   (/setup/:bookId); the chosen chapter lives in local state for now and will
-   move into shared session state in Iteration 4. */
+/* VIEW 2: session setup. Book id comes from the URL (/setup/:bookId). */
 export default function SessionSetupScreen() {
   const { bookId } = useParams();
   const navigate = useNavigate();
@@ -14,6 +11,16 @@ export default function SessionSetupScreen() {
   const book = bookId ? BOOKS_BY_ID[bookId] : undefined;
 
   const [chapter, setChapter] = useState(1);
+  const [notesOpen, setNotesOpen] = useState(false);
+
+  useEffect(() => {
+    if (!notesOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setNotesOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [notesOpen]);
 
   // Unknown/mistyped book id: bounce back to the shelf rather than error.
   if (!book) return <Navigate to="/" replace />;
@@ -86,14 +93,72 @@ export default function SessionSetupScreen() {
           </button>
         </div>
 
-        <button className="btn-primary" onClick={beginReading}>
-          Begin Reading
-        </button>
+        <div className="setup__actions">
+          <button type="button" className="btn-primary" onClick={beginReading}>
+            Begin Reading
+          </button>
+          <button
+            type="button"
+            className="notes-btn"
+            aria-label="Your notes"
+            onClick={() => setNotesOpen(true)}
+          >
+            <img src="/icons/notes-icon.png" alt="" />
+          </button>
+        </div>
       </div>
 
       <button className="link-back" onClick={() => navigate("/")}>
         {"\u2039"} Back to the shelf
       </button>
+
+      {notesOpen && (
+        <div
+          className="notes-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="notes-modal-title"
+          onClick={() => setNotesOpen(false)}
+        >
+          <div
+            className="notes-modal__card"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="ornament ornament--labeled">
+              <span className="ornament__line" />
+              <span className="label-caps" id="notes-modal-title">
+                Your Notes
+              </span>
+              <span className="ornament__line" />
+            </div>
+            <div className="notes-modal__tiles">
+              <button
+                type="button"
+                className="notes-tile notes-tile--ready"
+                onClick={() => navigate(`/setup/${book.id}/questions`)}
+              >
+                Questions
+                <small>Open</small>
+              </button>
+              <button type="button" className="notes-tile" disabled>
+                Quotes
+                <small>Soon</small>
+              </button>
+              <button type="button" className="notes-tile" disabled>
+                Words
+                <small>Soon</small>
+              </button>
+            </div>
+            <button
+              type="button"
+              className="link-back notes-modal__close"
+              onClick={() => setNotesOpen(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

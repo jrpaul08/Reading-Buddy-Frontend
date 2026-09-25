@@ -954,21 +954,28 @@ button,
     justify-content: flex-start;
   }
 
-  /* Shelf: stack volumes into a single centered column */
+  /* Shelf: keep all volumes on one plank, fitting four across */
   .shelf__row {
-    flex-direction: column;
-    align-items: center;
-    gap: 1.25rem;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    justify-content: center;
+    gap: clamp(0.35rem, 1.8vw, 0.8rem);
+  }
+
+  .shelf__book {
+    flex: 1 1 0;
+    min-width: 0;
   }
 
   .shelf__book .book-cover {
-    width: min(58vw, 13rem);
+    width: 100%;
     height: auto;
   }
 
-  /* A column doesn't rest on one plank - soften the ledge into a base rail */
+  /* Four volumes rest on the plank; keep it substantial */
   .shelf__ledge {
-    height: 0.5rem;
+    height: 1rem;
   }
 
   .shelf__case {

@@ -556,6 +556,64 @@ button,
   line-height: 1.4;
 }
 
+.question-leaf {
+  background: #d4ba88;
+  color: #2c1a12;
+  border-radius: 3px 10px 10px 3px;
+  margin-bottom: 0.95rem;
+  box-shadow: 6px 8px 0 rgba(0, 0, 0, 0.16);
+}
+
+.question-leaf summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 1.05rem 1.05rem 0.95rem;
+  font-family: var(--serif-display);
+  font-size: 1.28rem;
+  line-height: 1.25;
+}
+
+.question-leaf summary::-webkit-details-marker {
+  display: none;
+}
+
+.question-leaf__hint {
+  display: block;
+  margin-top: 0.45rem;
+  font-family: var(--serif-body);
+  font-style: italic;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #9a6a26;
+}
+
+.question-leaf[open] .question-leaf__hint {
+  display: none;
+}
+
+.question-leaf__body {
+  padding: 0 1.05rem 1rem;
+  border-top: 1px solid rgba(92, 67, 48, 0.18);
+}
+
+.question-leaf__answer {
+  font-style: italic;
+  color: #5c4330;
+  font-size: 1.12rem;
+  margin-top: 0.75rem;
+}
+
+.question-leaf__chapter {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-family: var(--serif-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #7a541c;
+  text-align: left;
+}
+
 /* --------------------------------------------------------------------------- */
 /* VIEW 2.5: Warming up - a book-themed "getting your session ready" screen     */
 /* --------------------------------------------------------------------------- */

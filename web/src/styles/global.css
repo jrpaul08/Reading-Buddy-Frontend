@@ -1,0 +1,1021 @@
+:root {
+  --bg-deep: #211611;
+  --bg-mid: #2c1f17;
+  --bg-glow: #3a2a1d;
+  --cream: #ece0cb;
+  --cream-soft: #cbb9a0;
+  --muted: #8c7a64;
+  --gold: #d39a44;
+  --gold-soft: #c8893a;
+  --gold-deep: #9a6a26;
+  --line: rgba(196, 160, 110, 0.22);
+
+  --serif-display: "Playfair Display", Georgia, serif;
+  --serif-body: "Cormorant Garamond", Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--serif-body);
+  color: var(--cream);
+  background:
+    radial-gradient(120% 90% at 50% 38%, var(--bg-glow) 0%, var(--bg-mid) 42%, var(--bg-deep) 100%);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#app {
+  height: 100%;
+}
+
+/* --------------------------------------------------------------------------- */
+/* View switching                                                              */
+/* --------------------------------------------------------------------------- */
+.view {
+  display: none;
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vh, 3rem) clamp(1.25rem, 4vw, 2rem);
+  animation: fade-in 0.7s ease both;
+}
+
+/* Generous, delay-free touch targets across all interactive elements */
+button,
+.shelf__book {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.view.is-active {
+  display: flex;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------- */
+/* Shared typography                                                           */
+/* --------------------------------------------------------------------------- */
+.label-caps {
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* Landing hero - "Reading Buddy" is the dominant element on the page */
+.brand-title {
+  font-family: var(--serif-display);
+  font-weight: 600;
+  font-size: clamp(2.8rem, 6.5vw, 5rem);
+  line-height: 1;
+  letter-spacing: 0.015em;
+  color: var(--cream);
+  text-shadow: 0 2px 30px rgba(211, 154, 68, 0.12);
+}
+
+.shelf__tagline {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.15rem, 2.6vw, 1.7rem);
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  color: var(--gold-soft);
+  margin: 1rem auto 0;
+  max-width: 30rem;
+}
+
+.lede {
+  max-width: 34rem;
+  margin: 1.5rem auto 0;
+  font-size: 1.18rem;
+  line-height: 1.6;
+  color: var(--cream-soft);
+}
+
+/* --------------------------------------------------------------------------- */
+/* Ornamental dividers                                                         */
+/* --------------------------------------------------------------------------- */
+.ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: min(26rem, 70vw);
+  margin: 1.1rem auto;
+  color: var(--gold-deep);
+}
+
+.ornament__line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line), transparent);
+}
+
+.ornament__dot {
+  font-size: 1rem;
+  color: var(--gold-soft);
+  opacity: 0.8;
+}
+
+.ornament__icon {
+  width: 1.8rem;
+  height: 1.8rem;
+  opacity: 0.7;
+  filter: brightness(0) saturate(100%) invert(72%) sepia(13%) saturate(965%) hue-rotate(357deg) brightness(90%) contrast(85%);
+}
+
+.ornament--labeled .label-caps {
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------- */
+/* VIEW 1: Shelf                                                               */
+/* --------------------------------------------------------------------------- */
+.shelf__intro {
+  text-align: center;
+}
+
+.shelf__label {
+  margin: clamp(2rem, 6vh, 4.5rem) auto 1.25rem;
+  font-size: clamp(1rem, 1.8vw, 1.3rem);
+  font-weight: 700;
+  letter-spacing: 0.38em;
+  color: #6b4a2e;
+}
+
+/* Bookshelf frame: gold top rail + side posts + a wooden ledge the books rest on */
+.shelf__case {
+  position: relative;
+  width: min(50rem, 92vw);
+  margin: 0 auto;
+  padding: clamp(0.85rem, 2vw, 1.4rem) clamp(1rem, 3vw, 2rem) 0;
+  border-top: 2px solid rgba(34, 22, 13, 0.8);
+  border-left: 2px solid rgba(34, 22, 13, 0.8);
+  border-right: 2px solid rgba(34, 22, 13, 0.8);
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(180deg, rgba(38, 25, 15, 0.4), rgba(26, 17, 10, 0.2));
+}
+
+.shelf__row {
+  display: flex;
+  gap: clamp(0.7rem, 1.6vw, 1.3rem);
+  align-items: flex-end;
+  justify-content: center;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+/* The wooden plank the volumes sit on */
+.shelf__ledge {
+  height: 1.25rem;
+  margin: 0 calc(-1 * clamp(1rem, 3vw, 2.4rem));
+  border-top: 1px solid rgba(211, 154, 68, 0.4);
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(180deg, #45301f 0%, #2c1d12 60%, #1d130c 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(211, 154, 68, 0.25),
+    0 18px 28px rgba(0, 0, 0, 0.55);
+}
+
+/* --------------------------------------------------------------------------- */
+/* CSS book covers                                                             */
+/* --------------------------------------------------------------------------- */
+.book-cover {
+  position: relative;
+  width: 8.25rem;
+  aspect-ratio: 141 / 211;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #1c130d;
+  box-shadow:
+    0 1px 0 rgba(206, 170, 110, 0.15),
+    0 16px 30px rgba(0, 0, 0, 0.45);
+}
+
+.book-cover__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.book-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, rgba(255, 255, 255, 0.1) 0%, transparent 32%);
+  pointer-events: none;
+}
+
+/* Spine variant used on the shelf */
+.shelf__book {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: transform 0.4s ease, filter 0.4s ease;
+  filter: brightness(0.86);
+}
+
+.shelf__book .book-cover {
+  width: clamp(6.5rem, 9.5vw, 9.5rem);
+}
+
+/* Lift on pointer hover (desktop) and on tap/focus (touch + keyboard) */
+@media (hover: hover) {
+  .shelf__book:hover {
+    transform: translateY(-0.75rem);
+    filter: brightness(1.08);
+  }
+
+  .shelf__book:hover .book-cover {
+    box-shadow:
+      0 0 0 1px rgba(211, 154, 68, 0.45),
+      0 22px 40px rgba(0, 0, 0, 0.55);
+  }
+}
+
+.shelf__book:focus-visible,
+.shelf__book:active {
+  transform: translateY(-0.75rem);
+  filter: brightness(1.08);
+  outline: none;
+}
+
+.shelf__book:focus-visible .book-cover,
+.shelf__book:active .book-cover {
+  box-shadow:
+    0 0 0 1px rgba(211, 154, 68, 0.45),
+    0 22px 40px rgba(0, 0, 0, 0.55);
+}
+
+/* --------------------------------------------------------------------------- */
+/* VIEW 2: Session Setup                                                       */
+/* --------------------------------------------------------------------------- */
+.setup__brand {
+  font-family: var(--serif-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  color: var(--gold-soft);
+  text-align: center;
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.02em;
+}
+
+.setup__brand + .ornament {
+  margin-bottom: clamp(2rem, 6vh, 3.5rem);
+}
+
+.setup__card {
+  width: min(560px, 100%);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: clamp(1.6rem, 4vw, 2.6rem);
+  background: linear-gradient(180deg, rgba(58, 42, 29, 0.35), rgba(33, 22, 17, 0.2));
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+  text-align: center;
+}
+
+.setup__head {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  text-align: left;
+}
+
+.setup__head .book-cover {
+  flex: none;
+  width: 6rem;
+}
+
+.setup__title {
+  font-family: var(--serif-display);
+  font-weight: 500;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  line-height: 1.1;
+  color: var(--cream);
+}
+
+.setup__byline {
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--cream-soft);
+  margin: 0.4rem 0 0.7rem;
+}
+
+.setup__reading {
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 500;
+  margin-top: 0.4rem;
+}
+
+.setup__chapter-label {
+  font-size: 1.5rem;
+  color: var(--cream-soft);
+  margin: 0.9rem 0 0.3rem;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------- */
+/* Chapter stepper                                                             */
+/* --------------------------------------------------------------------------- */
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.5rem, 5vw, 2.2rem);
+  margin: 0.2rem 0 1.8rem;
+}
+
+.stepper__btn {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--cream-soft);
+  font-family: var(--serif-display);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+@media (hover: hover) {
+  .stepper__btn:hover {
+    border-color: var(--gold-soft);
+    color: var(--gold);
+  }
+}
+
+.stepper__btn:active {
+  transform: scale(0.92);
+  border-color: var(--gold-soft);
+  color: var(--gold);
+}
+
+.stepper__value {
+  font-family: var(--serif-display);
+  font-size: clamp(2.6rem, 7vw, 3.4rem);
+  font-weight: 500;
+  color: var(--cream);
+  min-width: 2.4rem;
+}
+
+/* --------------------------------------------------------------------------- */
+/* Buttons                                                                     */
+/* --------------------------------------------------------------------------- */
+.btn-primary {
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-soft) 100%);
+  color: #2a1a0c;
+  font-family: var(--serif-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.3s ease, filter 0.3s ease;
+  box-shadow: 0 12px 26px rgba(154, 106, 38, 0.35);
+}
+
+@media (hover: hover) {
+  .btn-primary:hover {
+    filter: brightness(1.06);
+    box-shadow: 0 16px 32px rgba(154, 106, 38, 0.5);
+  }
+}
+
+.btn-primary:active {
+  transform: translateY(1px) scale(0.995);
+}
+
+.link-back {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--serif-body);
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+@media (hover: hover) {
+  .link-back:hover {
+    color: var(--cream-soft);
+  }
+}
+
+.link-back:active {
+  color: var(--cream-soft);
+}
+
+.btn-primary {
+  min-height: 3.25rem;
+}
+
+/* --------------------------------------------------------------------------- */
+/* VIEW 2.5: Warming up - a book-themed "getting your session ready" screen     */
+/* --------------------------------------------------------------------------- */
+.warming__stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(80vw, 22rem);
+  height: clamp(8.5rem, 26vh, 12rem);
+  margin: clamp(1.75rem, 5vh, 3rem) 0;
+}
+
+/* Warm candle-like glow behind the book */
+.warming__glow {
+  position: absolute;
+  width: 70%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(211, 154, 68, 0.3) 0%,
+    rgba(211, 154, 68, 0.08) 52%,
+    transparent 72%
+  );
+  filter: blur(6px);
+  animation: warming-glow 3.4s ease-in-out infinite;
+}
+
+@keyframes warming-glow {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+/* Fade at the ends hides the loop reset so the turning reads as continuous */
+@keyframes warming-flip {
+  0% {
+    transform: rotateY(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  50% {
+    transform: rotateY(-180deg);
+    opacity: 1;
+  }
+  56%,
+  100% {
+    transform: rotateY(-180deg);
+    opacity: 0;
+  }
+}
+
+.warming__title {
+  font-family: var(--serif-display);
+  font-weight: 500;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  line-height: 1.2;
+  color: var(--cream);
+  text-align: center;
+  margin-top: 0.6rem;
+}
+
+.warming__status {
+  font-style: italic;
+  font-size: 1.12rem;
+  color: var(--gold-soft);
+  text-align: center;
+  min-height: 1.6em;
+  margin-top: 0.5rem;
+  transition: opacity 0.35s ease;
+}
+
+.warming__meter {
+  position: relative;
+  width: min(20rem, 70vw);
+  height: 2px;
+  margin-top: clamp(1.25rem, 3.5vh, 2.25rem);
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.warming__meter-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 38%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  animation: warming-sweep 1.9s ease-in-out infinite;
+}
+
+@keyframes warming-sweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+
+.warming__note {
+  margin-top: 0.75rem;
+  font-style: italic;
+  font-size: 1.12rem;
+  color: var(--gold-soft);
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------- */
+/* Loading-page book animation: an open hardback whose pages turn continuously. */
+/* --------------------------------------------------------------------------- */
+.bookanim {
+  --pw: 5rem;
+  --ph: 6.4rem;
+  --paper: linear-gradient(180deg, #f4ecd9, #e6d6b9);
+  --paper2: linear-gradient(180deg, #f7efdc, #eaddc0);
+  position: relative;
+  width: calc(var(--pw) * 2);
+  height: var(--ph);
+  perspective: 1400px;
+  transform: rotateX(8deg);
+  transform-style: preserve-3d;
+}
+
+.bookanim__page {
+  position: absolute;
+  top: 0;
+  width: var(--pw);
+  height: 100%;
+  background: var(--paper);
+  border: 1px solid rgba(211, 154, 68, 0.4);
+}
+
+.bookanim__page--left {
+  left: 0;
+  border-radius: 3px 1px 1px 3px;
+  transform-origin: right center;
+  transform: rotateY(10deg);
+  box-shadow: inset -9px 0 15px rgba(122, 90, 52, 0.16);
+}
+
+.bookanim__page--right {
+  right: 0;
+  border-radius: 1px 3px 3px 1px;
+  transform-origin: left center;
+  transform: rotateY(-10deg);
+  box-shadow: inset 9px 0 15px rgba(122, 90, 52, 0.16);
+}
+
+.bookanim__page--flip {
+  left: 50%;
+  transform-origin: left center;
+  border-radius: 2px 5px 5px 2px;
+  background: var(--paper2);
+  border: 1px solid rgba(211, 154, 68, 0.4);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.18);
+  backface-visibility: hidden;
+  animation: warming-flip 2.4s ease-in-out infinite;
+}
+
+.bookanim__page--flip-1 {
+  animation-delay: 0s;
+}
+.bookanim__page--flip-2 {
+  animation-delay: 0.8s;
+}
+.bookanim__page--flip-3 {
+  animation-delay: 1.6s;
+}
+
+/* Hardback boards: a dark-red tooled-leather cover with a gold binding keyline
+   that overhangs the pages slightly (a real book's "square"), rounded outer
+   corners, and a hard lower edge to imply board depth. */
+.bookanim__cover {
+  position: absolute;
+  top: -0.22rem;
+  height: calc(100% + 0.44rem);
+  width: calc(var(--pw) + 0.22rem);
+  background:
+    linear-gradient(125deg, rgba(255, 240, 210, 0.12), transparent 40%),
+    linear-gradient(160deg, #6e1f1f 0%, #4a1414 55%, #300c0c 100%);
+  border: 1px solid rgba(211, 154, 68, 0.7);
+  box-shadow:
+    inset 0 0 0 2px rgba(211, 154, 68, 0.2),
+    0 6px 0 -1px rgba(0, 0, 0, 0.95),
+    0 22px 36px rgba(0, 0, 0, 0.6);
+}
+.bookanim__cover--left {
+  left: -0.22rem;
+  border-radius: 11px 2px 2px 11px;
+  transform-origin: right center;
+  transform: rotateY(10deg);
+}
+.bookanim__cover--right {
+  right: -0.22rem;
+  border-radius: 2px 11px 11px 2px;
+  transform-origin: left center;
+  transform: rotateY(-10deg);
+}
+
+/* --------------------------------------------------------------------------- */
+/* VIEW 3: Reading session                                                     */
+/* --------------------------------------------------------------------------- */
+.reading-session__head {
+  text-align: center;
+}
+
+.reading-session__author {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--cream-soft);
+  margin-bottom: 0.4rem;
+}
+
+.reading-session__title {
+  font-family: var(--serif-display);
+  font-weight: 500;
+  font-size: clamp(2.2rem, 6vw, 3.4rem);
+  color: var(--cream);
+  line-height: 1.1;
+}
+
+.reading-session__chapter {
+  color: var(--gold-soft);
+}
+
+/* Make the chapter ornament/divider larger and more prominent */
+.reading-session__head .ornament {
+  margin: 1rem auto;
+  width: min(32rem, 80vw);
+}
+
+.reading-session__head .ornament .label-caps {
+  font-size: 0.95rem;
+  letter-spacing: 0.35em;
+}
+
+/* Chapter controls in reading session */
+.reading-session__chapter-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.reading-session__chapter-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--cream-soft);
+  font-family: var(--serif-display);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+@media (hover: hover) {
+  .reading-session__chapter-btn:hover {
+    border-color: var(--gold-soft);
+    color: var(--gold);
+  }
+}
+
+.reading-session__chapter-btn:active {
+  transform: scale(0.92);
+  border-color: var(--gold-soft);
+  color: var(--gold);
+}
+
+.reading-session__chapter-num {
+  font-family: var(--serif-display);
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--cream);
+  min-width: 2rem;
+  text-align: center;
+}
+
+/* Mic orb - dominant, square, and capped by both width and height so the
+   session screen fits the viewport without scrolling */
+.mic {
+  position: relative;
+  width: min(80vw, 20rem, 42vh);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  margin: clamp(1.25rem, 3.5vh, 2.5rem) 0;
+}
+
+.mic__ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(196, 160, 110, 0.18);
+  pointer-events: none;
+}
+
+.mic__ring--outer {
+  width: 100%;
+  height: 100%;
+}
+
+.mic__ring--mid {
+  width: 77%;
+  height: 77%;
+  border-color: rgba(196, 160, 110, 0.26);
+}
+
+.mic__button {
+  position: relative;
+  width: 53%;
+  height: 53%;
+  min-width: 9rem;
+  min-height: 9rem;
+  border-radius: 50%;
+  border: 1px solid rgba(211, 154, 68, 0.4);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+  background:
+    radial-gradient(circle at 50% 38%, rgba(211, 154, 68, 0.22), rgba(58, 42, 29, 0.5) 60%, rgba(33, 22, 17, 0.6));
+  box-shadow:
+    0 0 50px rgba(211, 154, 68, 0.18),
+    inset 0 0 30px rgba(211, 154, 68, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.4s ease, color 0.3s ease;
+}
+
+@media (hover: hover) {
+  .mic__button:hover {
+    transform: scale(1.03);
+    box-shadow:
+      0 0 70px rgba(211, 154, 68, 0.3),
+      inset 0 0 36px rgba(211, 154, 68, 0.18);
+  }
+}
+
+.mic__button:active {
+  transform: scale(0.97);
+}
+
+.mic__icon {
+  width: 30%;
+  height: auto;
+}
+
+.reading-session__status {
+  font-size: 1.18rem;
+  font-style: italic;
+  color: var(--cream-soft);
+  min-height: 1.6em;
+  transition: color 0.3s ease;
+}
+
+.recording-cancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.85rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid rgba(242, 217, 166, 0.35);
+  border-radius: 50%;
+  background: rgba(20, 12, 8, 0.35);
+  color: rgba(242, 217, 166, 0.85);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.recording-cancel__icon {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.recording-cancel:hover {
+  color: var(--gold);
+  border-color: rgba(211, 154, 68, 0.55);
+  background: rgba(20, 12, 8, 0.5);
+}
+
+.recording-cancel:active {
+  opacity: 0.85;
+}
+
+.reading-session__footer {
+  margin-top: clamp(1.25rem, 3vh, 2rem);
+}
+
+/* Mic states ---------------------------------------------------------------- */
+.mic[data-state="recording"] .mic__button {
+  color: #f2d9a6;
+  box-shadow:
+    0 0 90px rgba(211, 154, 68, 0.5),
+    inset 0 0 40px rgba(211, 154, 68, 0.28);
+}
+
+.mic[data-state="recording"] .mic__ring {
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+.mic[data-state="recording"] .mic__ring--mid {
+  animation-delay: 0.5s;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+}
+
+.mic[data-state="processing"] .mic__button {
+  animation: breathe 1.8s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(0.97);
+    box-shadow: 0 0 40px rgba(211, 154, 68, 0.18), inset 0 0 24px rgba(211, 154, 68, 0.1);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 80px rgba(211, 154, 68, 0.4), inset 0 0 40px rgba(211, 154, 68, 0.24);
+  }
+}
+
+.mic[data-state="processing"] .mic__button {
+  cursor: progress;
+}
+
+.mic[data-state="playing"] .mic__ring {
+  animation: pulse-ring 2.6s ease-out infinite;
+}
+
+.mic[data-state="playing"] .mic__button {
+  color: #f2d9a6;
+  cursor: pointer;
+}
+
+.mic[data-state="ready-to-play"] .mic__ring {
+  animation: pulse-ring 2.6s ease-out infinite;
+}
+
+.mic[data-state="ready-to-play"] .mic__button {
+  color: #f2d9a6;
+}
+
+.mic[data-state="error"] .mic__button {
+  border-color: rgba(180, 90, 70, 0.6);
+  color: #d99;
+}
+
+/* --------------------------------------------------------------------------- */
+/* Responsive - MOBILE (targets iPhone widths ~390px)                          */
+/* --------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  /* On phones the content (a stacked shelf) is taller than the viewport, so
+     let the page flow and scroll from the top instead of locking to 100vh.
+     Otherwise the centered content overflows and clips the header. */
+  html,
+  body {
+    height: auto;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  #app {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .view {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+    justify-content: flex-start;
+  }
+
+  /* Shelf: stack volumes into a single centered column */
+  .shelf__row {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .shelf__book .book-cover {
+    width: min(58vw, 13rem);
+    height: auto;
+  }
+
+  /* A column doesn't rest on one plank - soften the ledge into a base rail */
+  .shelf__ledge {
+    height: 0.5rem;
+  }
+
+  .shelf__case {
+    padding-top: 1.5rem;
+  }
+
+  /* Keep the hero prominent but prevent overflow on narrow screens */
+  .brand-title {
+    font-size: clamp(2.5rem, 13vw, 3.6rem);
+  }
+
+  .setup__head {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+
+  .setup__card {
+    text-align: center;
+  }
+
+  /* Bigger, easier chapter stepper targets on touch */
+  .stepper__btn {
+    width: 3.25rem;
+    height: 3.25rem;
+    font-size: 1.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view,
+  .mic__ring,
+  .mic__button,
+  .warming__glow,
+  .warming__meter-fill,
+  .bookanim__page--flip {
+    animation: none !important;
+  }
+
+  /* With motion off, keep one page mid-turn so the book still reads as "open" */
+  .bookanim__page--flip-2,
+  .bookanim__page--flip-3 {
+    opacity: 0;
+  }
+
+  .bookanim__page--flip-1 {
+    opacity: 1;
+    transform: rotateY(-70deg);
+  }
+}

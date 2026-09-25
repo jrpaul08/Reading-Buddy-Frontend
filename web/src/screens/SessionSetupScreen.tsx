@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { BOOKS_BY_ID, coverUrl } from "../data/books";
+import { useSession } from "../session/SessionContext";
 
 /* VIEW 2: session setup. Shows the chosen book and a chapter stepper, then
    sends the reader on to the warming screen. The book id comes from the URL
@@ -9,6 +10,7 @@ import { BOOKS_BY_ID, coverUrl } from "../data/books";
 export default function SessionSetupScreen() {
   const { bookId } = useParams();
   const navigate = useNavigate();
+  const { start, isWarm } = useSession();
   const book = bookId ? BOOKS_BY_ID[bookId] : undefined;
 
   const [chapter, setChapter] = useState(1);
@@ -19,7 +21,12 @@ export default function SessionSetupScreen() {
   const changeChapter = (next: number) =>
     setChapter(Math.min(Math.max(1, next), book.chapters));
 
-  const beginReading = () => navigate("/warming");
+  const beginReading = () => {
+    start(book, chapter);
+    // Warmed recently? The pipeline is still up — skip the loading screen and
+    // go straight in. Otherwise show the warm-up screen while it spins up.
+    navigate(isWarm() ? "/session" : "/warming");
+  };
 
   return (
     <section

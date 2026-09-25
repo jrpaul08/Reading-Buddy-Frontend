@@ -1,9 +1,10 @@
 import { Routes, Route, Navigate, Link } from "react-router-dom";
 import ShelfScreen from "./screens/ShelfScreen";
 import SessionSetupScreen from "./screens/SessionSetupScreen";
+import WarmingScreen from "./screens/WarmingScreen";
 
 /* Placeholder pages for views we haven't built yet. Each becomes a real screen
-   in a later iteration (Warming, Reading Session). */
+   in a later iteration (Reading Session). */
 function Placeholder({ title, next }: { title: string; next?: string }) {
   return (
     <section className="view is-active">
@@ -33,7 +34,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<ShelfScreen />} />
         <Route path="/setup/:bookId" element={<SessionSetupScreen />} />
-        <Route path="/warming" element={<Placeholder title="Warming" next="/session" />} />
+        <Route path="/warming" element={<WarmingScreen />} />
         <Route path="/session" element={<Placeholder title="Reading Session" />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

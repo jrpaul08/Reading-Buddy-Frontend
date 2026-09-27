@@ -3,7 +3,10 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { SessionProvider } from "./session/SessionContext";
+import { getSessionId } from "./lib/sessionId";
 import "./styles/global.css";
+
+getSessionId();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

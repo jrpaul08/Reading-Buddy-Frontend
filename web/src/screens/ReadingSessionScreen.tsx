@@ -46,6 +46,9 @@ export default function ReadingSessionScreen() {
   const discardedRef = useRef(false);
   const pendingUrlRef = useRef<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const lastTurnRef = useRef<{ question: string; answer: string; chapter: number } | null>(
+    null
+  );
 
   // Clean up any in-flight recording/playback if the reader leaves the page.
   // Uses only refs so it can run before the early return below (Rules of Hooks:
@@ -110,11 +113,15 @@ export default function ReadingSessionScreen() {
   const sendQuestion = async (blob: Blob) => {
     setMic("processing");
     try {
-      const url = await askQuestion(blob, book, chapter);
+      const result = await askQuestion(blob, book, chapter);
+      lastTurnRef.current =
+        result.question && result.answer
+          ? { question: result.question, answer: result.answer, chapter }
+          : null;
       // A successful answer means the pipeline is warm; refresh the TTL so
       // re-entering a session won't trigger a needless (billable) warm-up.
       markWarm();
-      playAnswer(url);
+      playAnswer(result.audioUrl);
     } catch (err) {
       console.error("Reading Buddy ask failed:", err);
       setMic("error");

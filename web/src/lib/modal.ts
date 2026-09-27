@@ -1,23 +1,32 @@
 import { MOCK, S2S_URL } from "./config";
 import type { Book } from "../data/books";
 
-/* Send the reader's recorded question to the Modal voice-to-voice endpoint and
-   return a playable object URL for the spoken answer.
+export type AskResult = {
+  audioUrl: string;
+  question: string;
+  answer: string;
+};
 
-   The multipart shape mirrors the old Gradio backend's call_modal(): an "audio"
-   file part plus book context and the current chapter (which gates spoilers).
-   Modal can answer a slow call with a 303 redirect; fetch follows redirects by
-   default, so we just await the final audio response.
+function decodeHeader(value: string | null): string {
+  if (!value) return "";
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
 
-   In mock mode (or with no endpoint configured) it echoes the recording back,
-   so the record → send → play loop is fully testable without any GPU cost. */
+/* Send the reader's recorded question to the Modal voice-to-voice endpoint.
+   Response body is still raw WAV. Question/answer text arrive as percent-encoded
+   headers (X-Question, X-Answer-Text). Mock mode echoes the recording and
+   leaves the text empty. */
 export async function askQuestion(
   blob: Blob,
   book: Book,
   chapter: number
-): Promise<string> {
+): Promise<AskResult> {
   if (MOCK || !S2S_URL) {
-    return URL.createObjectURL(blob);
+    return { audioUrl: URL.createObjectURL(blob), question: "", answer: "" };
   }
 
   const form = new FormData();
@@ -33,6 +42,10 @@ export async function askQuestion(
   const res = await fetch(S2S_URL, { method: "POST", body: form });
   if (!res.ok) throw new Error(`Modal responded with HTTP ${res.status}`);
 
-  const answer = await res.blob();
-  return URL.createObjectURL(answer);
+  const audioUrl = URL.createObjectURL(await res.blob());
+  return {
+    audioUrl,
+    question: decodeHeader(res.headers.get("X-Question")),
+    answer: decodeHeader(res.headers.get("X-Answer-Text")),
+  };
 }

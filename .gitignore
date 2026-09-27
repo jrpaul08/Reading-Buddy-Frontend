@@ -12,6 +12,7 @@ env/
 # Secrets / local config (set these as Hugging Face Space Secrets instead)
 .env
 .env.*
+!web/.env.production
 
 # Gradio runtime artifacts
 flagged/

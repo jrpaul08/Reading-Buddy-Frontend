@@ -4,6 +4,8 @@
 
 export const S2S_URL: string = import.meta.env.VITE_S2S_URL ?? "";
 export const WARMUP_URL: string = import.meta.env.VITE_WARMUP_URL ?? "";
+export const SAVE_URL: string = import.meta.env.VITE_SAVE_URL ?? "";
+export const LIST_URL: string = import.meta.env.VITE_LIST_URL ?? "";
 
 /* Mock mode: never touch Modal (no GPU cost). Explicitly enabled via
    VITE_MOCK=1, and also implied when no endpoint URLs are configured (e.g. a

@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useSession } from "../session/SessionContext";
 import { askQuestion } from "../lib/modal";
+import { isSaveCommand } from "../lib/saveCommand";
+import { savePair } from "../lib/saved";
 
 type MicState =
   | "idle"
@@ -114,13 +116,35 @@ export default function ReadingSessionScreen() {
     setMic("processing");
     try {
       const result = await askQuestion(blob, book, chapter);
+      // A successful round-trip means the pipeline is warm.
+      markWarm();
+
+      if (isSaveCommand(result.question)) {
+        URL.revokeObjectURL(result.audioUrl);
+        const prior = lastTurnRef.current;
+        if (!prior) {
+          setMic("idle", "Nothing to save yet.");
+          return;
+        }
+        try {
+          await savePair({
+            question: prior.question,
+            answer: prior.answer,
+            book_id: book.id,
+            chapter: prior.chapter,
+          });
+          setMic("idle", "Saved.");
+        } catch (err) {
+          console.error("Reading Buddy save failed:", err);
+          setMic("idle", "Couldn't save. Try again.");
+        }
+        return;
+      }
+
       lastTurnRef.current =
         result.question && result.answer
           ? { question: result.question, answer: result.answer, chapter }
           : null;
-      // A successful answer means the pipeline is warm; refresh the TTL so
-      // re-entering a session won't trigger a needless (billable) warm-up.
-      markWarm();
       playAnswer(result.audioUrl);
     } catch (err) {
       console.error("Reading Buddy ask failed:", err);

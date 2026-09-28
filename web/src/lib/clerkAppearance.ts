@@ -4,7 +4,6 @@ export const clerkAppearance = {
     colorPrimary: "#d39a44",
     colorBackground: "#2c1f17",
     borderRadius: "12px",
-    fontFamily: '"Cormorant Garamond", Georgia, serif',
     fontFamilyButtons: '"Playfair Display", Georgia, serif',
   },
 } as const;

@@ -7,9 +7,33 @@ export type RequestAuth =
 
 let guestSessionId: string | undefined;
 let getClerkToken: (() => Promise<string | null>) | null = null;
+const authListeners = new Set<() => void>();
+
+const clerkConfigured = Boolean(import.meta.env.VITE_CLERK_PUBLISHABLE_KEY);
+let markReady: (() => void) | undefined;
+const clerkReady = clerkConfigured
+  ? new Promise<void>((resolve) => {
+      markReady = resolve;
+    })
+  : Promise.resolve();
 
 export function registerClerkTokenGetter(fn: (() => Promise<string | null>) | null) {
   getClerkToken = fn;
+}
+
+export function markClerkAuthReady() {
+  markReady?.();
+}
+
+export function subscribeAuthChange(listener: () => void) {
+  authListeners.add(listener);
+  return () => {
+    authListeners.delete(listener);
+  };
+}
+
+export function notifyAuthChange() {
+  for (const listener of authListeners) listener();
 }
 
 export function getGuestSessionId(): string {
@@ -18,6 +42,7 @@ export function getGuestSessionId(): string {
 }
 
 export async function getRequestAuth(): Promise<RequestAuth> {
+  await clerkReady;
   const token = getClerkToken ? await getClerkToken() : null;
   if (token) return { kind: "user", token };
   return { kind: "guest", sessionId: getGuestSessionId() };

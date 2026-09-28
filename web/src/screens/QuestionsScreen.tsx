@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { BOOKS_BY_ID } from "../data/books";
+import { useAuthTick } from "../components/AuthBridge";
 import { listSaved, type SavedResponse } from "../lib/saved";
 
 export default function QuestionsScreen() {
@@ -9,6 +10,7 @@ export default function QuestionsScreen() {
   const book = bookId ? BOOKS_BY_ID[bookId] : undefined;
   const [items, setItems] = useState<SavedResponse[] | null>(null);
   const [failed, setFailed] = useState(false);
+  const authTick = useAuthTick();
 
   useEffect(() => {
     if (!bookId) return;
@@ -29,7 +31,7 @@ export default function QuestionsScreen() {
     return () => {
       cancelled = true;
     };
-  }, [bookId]);
+  }, [bookId, authTick]);
 
   if (!book) return <Navigate to="/" replace />;
 

@@ -1,6 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/react";
-import { registerClerkTokenGetter } from "../lib/requestAuth";
+import {
+  markClerkAuthReady,
+  notifyAuthChange,
+  registerClerkTokenGetter,
+  subscribeAuthChange,
+} from "../lib/requestAuth";
 
 /* Keeps requestAuth in sync with Clerk. Must sit under ClerkProvider. */
 export default function AuthBridge() {
@@ -12,12 +17,21 @@ function AuthBridgeInner() {
   const { getToken, isSignedIn, isLoaded } = useAuth();
 
   useEffect(() => {
+    if (!isLoaded) return;
     registerClerkTokenGetter(async () => {
-      if (!isLoaded || !isSignedIn) return null;
+      if (!isSignedIn) return null;
       return (await getToken()) ?? null;
     });
-    return () => registerClerkTokenGetter(null);
+    markClerkAuthReady();
+    notifyAuthChange();
   }, [getToken, isSignedIn, isLoaded]);
 
   return null;
+}
+
+/* Notes pages re-fetch when the reader signs in or out. */
+export function useAuthTick() {
+  const [tick, setTick] = useState(0);
+  useEffect(() => subscribeAuthChange(() => setTick((n) => n + 1)), []);
+  return tick;
 }

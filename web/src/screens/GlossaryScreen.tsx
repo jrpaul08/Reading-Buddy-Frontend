@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { BOOKS_BY_ID } from "../data/books";
+import { useAuthTick } from "../components/AuthBridge";
 import { listGlossary, type GlossaryItem } from "../lib/glossary";
 
 export default function GlossaryScreen() {
@@ -9,6 +10,7 @@ export default function GlossaryScreen() {
   const book = bookId ? BOOKS_BY_ID[bookId] : undefined;
   const [items, setItems] = useState<GlossaryItem[] | null>(null);
   const [failed, setFailed] = useState(false);
+  const authTick = useAuthTick();
 
   useEffect(() => {
     if (!bookId) return;
@@ -29,7 +31,7 @@ export default function GlossaryScreen() {
     return () => {
       cancelled = true;
     };
-  }, [bookId]);
+  }, [bookId, authTick]);
 
   if (!book) return <Navigate to="/" replace />;
 

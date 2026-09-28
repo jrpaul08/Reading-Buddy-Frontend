@@ -1,5 +1,10 @@
 import { LIST_URL, MOCK, SAVE_URL } from "./config";
-import { getSessionId } from "./sessionId";
+import {
+  appendGuestToForm,
+  appendGuestToUrl,
+  authHeaders,
+  getRequestAuth,
+} from "./requestAuth";
 
 export type SavedResponse = {
   question: string;
@@ -32,22 +37,28 @@ function writeMockStore(items: SavedResponse[]) {
 }
 
 async function savePairRemote(input: SaveInput): Promise<{ status: string; count: number }> {
+  const auth = await getRequestAuth();
   const form = new FormData();
-  form.append("session_id", getSessionId());
+  appendGuestToForm(form, auth);
   form.append("question", input.question);
   form.append("answer", input.answer);
   form.append("book_id", input.book_id);
   form.append("chapter", String(input.chapter));
 
-  const res = await fetch(SAVE_URL, { method: "POST", body: form });
+  const res = await fetch(SAVE_URL, {
+    method: "POST",
+    body: form,
+    headers: authHeaders(auth),
+  });
   if (!res.ok) throw new Error(`Save failed with HTTP ${res.status}`);
   return (await res.json()) as { status: string; count: number };
 }
 
 async function listSavedRemote(): Promise<SavedResponse[]> {
+  const auth = await getRequestAuth();
   const url = new URL(LIST_URL);
-  url.searchParams.set("session_id", getSessionId());
-  const res = await fetch(url);
+  appendGuestToUrl(url, auth);
+  const res = await fetch(url, { headers: authHeaders(auth) });
   if (!res.ok) throw new Error(`List failed with HTTP ${res.status}`);
   const data = await res.json();
   return Array.isArray(data) ? (data as SavedResponse[]) : [];

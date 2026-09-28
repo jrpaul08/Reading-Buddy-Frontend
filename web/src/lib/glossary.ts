@@ -1,5 +1,10 @@
 import { GLOSSARY_ADD_URL, GLOSSARY_LIST_URL, MOCK } from "./config";
-import { getSessionId } from "./sessionId";
+import {
+  appendGuestToForm,
+  appendGuestToUrl,
+  authHeaders,
+  getRequestAuth,
+} from "./requestAuth";
 
 export type GlossaryItem = {
   term: string;
@@ -36,14 +41,19 @@ function writeMockStore(items: GlossaryItem[]) {
 }
 
 async function addToGlossaryRemote(input: GlossaryInput): Promise<GlossaryAddResult> {
+  const auth = await getRequestAuth();
   const form = new FormData();
-  form.append("session_id", getSessionId());
+  appendGuestToForm(form, auth);
   form.append("question", input.question);
   form.append("answer", input.answer);
   form.append("book_id", input.book_id);
   form.append("chapter", String(input.chapter));
 
-  const res = await fetch(GLOSSARY_ADD_URL, { method: "POST", body: form });
+  const res = await fetch(GLOSSARY_ADD_URL, {
+    method: "POST",
+    body: form,
+    headers: authHeaders(auth),
+  });
   if (!res.ok) throw new Error(`Glossary add failed with HTTP ${res.status}`);
   const data = (await res.json()) as {
     status?: string;
@@ -64,9 +74,10 @@ async function addToGlossaryRemote(input: GlossaryInput): Promise<GlossaryAddRes
 }
 
 async function listGlossaryRemote(): Promise<GlossaryItem[]> {
+  const auth = await getRequestAuth();
   const url = new URL(GLOSSARY_LIST_URL);
-  url.searchParams.set("session_id", getSessionId());
-  const res = await fetch(url);
+  appendGuestToUrl(url, auth);
+  const res = await fetch(url, { headers: authHeaders(auth) });
   if (!res.ok) throw new Error(`Glossary list failed with HTTP ${res.status}`);
   const data = await res.json();
   return Array.isArray(data) ? (data as GlossaryItem[]) : [];

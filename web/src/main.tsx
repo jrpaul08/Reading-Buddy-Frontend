@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { SessionProvider } from "./session/SessionContext";
 import { getSessionId } from "./lib/sessionId";
+import { addToGlossary, listGlossary } from "./lib/glossary";
 import { isGlossaryCommand } from "./lib/glossaryCommand";
 import { listSaved, savePair } from "./lib/saved";
 import "./styles/global.css";
@@ -11,7 +12,14 @@ import "./styles/global.css";
 getSessionId();
 
 if (import.meta.env.DEV) {
-  Object.assign(window, { savePair, listSaved, getSessionId, isGlossaryCommand });
+  Object.assign(window, {
+    savePair,
+    listSaved,
+    getSessionId,
+    isGlossaryCommand,
+    addToGlossary,
+    listGlossary,
+  });
 }
 
 createRoot(document.getElementById("root")!).render(

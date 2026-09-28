@@ -5,6 +5,7 @@ import { askQuestion } from "../lib/modal";
 import { addToGlossary } from "../lib/glossary";
 import { isGlossaryCommand } from "../lib/glossaryCommand";
 import { isSaveCommand } from "../lib/saveCommand";
+import { saveReadingPosition } from "../lib/readingPosition";
 import { savePair } from "../lib/saved";
 
 type MicState =
@@ -76,8 +77,11 @@ export default function ReadingSessionScreen() {
     setStatusText(override ?? STATUS_TEXT[state]);
   };
 
-  const changeChapter = (next: number) =>
-    setChapter(Math.min(Math.max(1, next), book.chapters));
+  const changeChapter = (next: number) => {
+    const clamped = Math.min(Math.max(1, next), book.chapters);
+    setChapter(clamped);
+    void saveReadingPosition({ book_id: book.id, chapter: clamped });
+  };
 
   /* ---- Playback ---------------------------------------------------------- */
   const playAnswer = (url: string) => {

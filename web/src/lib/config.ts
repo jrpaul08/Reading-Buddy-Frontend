@@ -1,6 +1,6 @@
 /* Runtime configuration, read from Vite env vars (see .env.example).
-   These are baked into the client bundle at build time. The Modal endpoints
-   are currently unauthenticated, so exposing them in the client is fine. */
+   These are baked into the client bundle at build time. Endpoint URLs are
+   public; save/list/position still send a Clerk token or guest session_id. */
 
 export const S2S_URL: string = import.meta.env.VITE_S2S_URL ?? "";
 export const WARMUP_URL: string = import.meta.env.VITE_WARMUP_URL ?? "";

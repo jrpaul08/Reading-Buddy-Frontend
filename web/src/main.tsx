@@ -7,6 +7,10 @@ import { SessionProvider } from "./session/SessionContext";
 import { getGuestSessionId, getRequestAuth } from "./lib/requestAuth";
 import { addToGlossary, listGlossary } from "./lib/glossary";
 import { isGlossaryCommand } from "./lib/glossaryCommand";
+import {
+  getReadingPosition,
+  saveReadingPosition,
+} from "./lib/readingPosition";
 import { listSaved, savePair } from "./lib/saved";
 import { clerkAppearance } from "./lib/clerkAppearance";
 import "./styles/global.css";
@@ -20,6 +24,8 @@ if (import.meta.env.DEV) {
     listGlossary,
     getRequestAuth,
     getGuestSessionId,
+    saveReadingPosition,
+    getReadingPosition,
   });
 }
 

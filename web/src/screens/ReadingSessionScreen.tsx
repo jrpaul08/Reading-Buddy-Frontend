@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useSession } from "../session/SessionContext";
 import { askQuestion } from "../lib/modal";
+import { addToGlossary } from "../lib/glossary";
+import { isGlossaryCommand } from "../lib/glossaryCommand";
 import { isSaveCommand } from "../lib/saveCommand";
 import { savePair } from "../lib/saved";
 
@@ -137,6 +139,32 @@ export default function ReadingSessionScreen() {
         } catch (err) {
           console.error("Reading Buddy save failed:", err);
           setMic("idle", "Couldn't save. Try again.");
+        }
+        return;
+      }
+
+      if (isGlossaryCommand(result.question)) {
+        URL.revokeObjectURL(result.audioUrl);
+        const prior = lastTurnRef.current;
+        if (!prior) {
+          setMic("idle", "Nothing to add yet.");
+          return;
+        }
+        try {
+          const added = await addToGlossary({
+            question: prior.question,
+            answer: prior.answer,
+            book_id: book.id,
+            chapter: prior.chapter,
+          });
+          if (added.status === "saved") {
+            setMic("idle", `Saved: ${added.term} — ${added.definition}`);
+          } else {
+            setMic("idle", "That wasn't a word definition.");
+          }
+        } catch (err) {
+          console.error("Reading Buddy glossary add failed:", err);
+          setMic("idle", "Couldn't add. Try again.");
         }
         return;
       }

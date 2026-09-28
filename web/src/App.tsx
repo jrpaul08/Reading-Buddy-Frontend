@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import AccountBar from "./components/AccountBar";
+import AuthBridge from "./components/AuthBridge";
 import ClerkDevBridge from "./components/ClerkDevBridge";
 import ShelfScreen from "./screens/ShelfScreen";
 import SessionSetupScreen from "./screens/SessionSetupScreen";
@@ -14,6 +15,7 @@ import GlossaryScreen from "./screens/GlossaryScreen";
 export default function App() {
   return (
     <main id="app">
+      <AuthBridge />
       <ClerkDevBridge />
       <AccountBar />
       <Routes>

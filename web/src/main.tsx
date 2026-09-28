@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { SessionProvider } from "./session/SessionContext";
 import { getSessionId } from "./lib/sessionId";
+import { getGuestSessionId, getRequestAuth } from "./lib/requestAuth";
 import { addToGlossary, listGlossary } from "./lib/glossary";
 import { isGlossaryCommand } from "./lib/glossaryCommand";
 import { listSaved, savePair } from "./lib/saved";
@@ -21,6 +22,8 @@ if (import.meta.env.DEV) {
     isGlossaryCommand,
     addToGlossary,
     listGlossary,
+    getRequestAuth,
+    getGuestSessionId,
   });
 }
 

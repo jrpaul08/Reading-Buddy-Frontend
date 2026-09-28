@@ -503,7 +503,7 @@ button,
 
 .notes-modal__tiles {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.55rem;
   margin-top: 0.35rem;
 }
@@ -545,8 +545,39 @@ button,
   overflow: auto;
 }
 
+.view--questions .ornament--labeled {
+  width: min(26rem, 100%);
+  margin: 0.4rem auto 0.85rem;
+}
+
+.view--questions .ornament--labeled .label-caps {
+  font-family: var(--serif-display);
+  font-size: clamp(1.55rem, 4.2vw, 2.05rem);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+}
+
 .questions__list {
   width: min(26rem, 100%);
+}
+
+.questions__hint {
+  width: min(26rem, 100%);
+  margin: 0 auto 2.75rem;
+  text-align: center;
+  font-family: var(--serif-display);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--cream);
+  line-height: 1.25;
+  padding: 0.28rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(211, 154, 68, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(211, 154, 68, 0.28);
+  white-space: nowrap;
 }
 
 .questions__empty {
@@ -1203,6 +1234,10 @@ button,
   .notes-tile {
     font-size: 0.98rem;
     min-height: 4.2rem;
+  }
+
+  .questions__hint {
+    white-space: normal;
   }
 
   /* Bigger, easier chapter stepper targets on touch */

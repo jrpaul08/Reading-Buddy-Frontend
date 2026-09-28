@@ -138,15 +138,13 @@ export default function SessionSetupScreen() {
                 onClick={() => navigate(`/setup/${book.id}/questions`)}
               >
                 Questions
-                <small>Open</small>
               </button>
-              <button type="button" className="notes-tile" disabled>
-                Quotes
-                <small>Soon</small>
-              </button>
-              <button type="button" className="notes-tile" disabled>
-                Words
-                <small>Soon</small>
+              <button
+                type="button"
+                className="notes-tile notes-tile--ready"
+                onClick={() => navigate(`/setup/${book.id}/glossary`)}
+              >
+                Glossary
               </button>
             </div>
             <button

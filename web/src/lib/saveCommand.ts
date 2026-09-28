@@ -8,7 +8,7 @@ export function isSaveCommand(raw: string): boolean {
     .replace(/\s+/g, " ");
   if (!text) return false;
   if (text.split(" ").length > 6) return false;
-  return /^(please |can you |could you )?(save|remember) (this|that|it)( answer)?$/.test(
+  return /^(please |can you |could you )?(save|remember) (this|that|it)( answer| response)?$/.test(
     text
   );
 }

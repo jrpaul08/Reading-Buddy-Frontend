@@ -37,6 +37,34 @@ body {
 
 #app {
   height: 100%;
+  position: relative;
+}
+
+.account-bar {
+  position: absolute;
+  top: max(0.7rem, env(safe-area-inset-top, 0px));
+  right: max(0.7rem, env(safe-area-inset-right, 0px));
+  z-index: 16;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.account-bar__btn {
+  min-height: 2.1rem;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--cream-soft);
+  font-family: var(--serif-body);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.account-bar__btn--primary {
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 /* --------------------------------------------------------------------------- */

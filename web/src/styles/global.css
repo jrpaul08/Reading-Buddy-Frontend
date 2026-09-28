@@ -9,6 +9,7 @@
   --gold-soft: #c8893a;
   --gold-deep: #9a6a26;
   --line: rgba(196, 160, 110, 0.22);
+  --guest-bubble: #4a372c;
 
   --serif-display: "Playfair Display", Georgia, serif;
   --serif-body: "Cormorant Garamond", Georgia, serif;
@@ -46,8 +47,63 @@ body {
   right: max(0.7rem, env(safe-area-inset-right, 0px));
   z-index: 16;
   display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.account-bar__signed-out {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: max-content;
+  max-width: min(17rem, calc(100vw - 1.6rem));
+}
+
+.account-bar__buttons {
+  display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 0.4rem;
+}
+
+.account-bar__hint {
+  position: relative;
+  /* Size to the button row: don't let the sentence widen the cluster. */
+  width: 0;
+  min-width: 100%;
+  margin: 0.55rem 0 0;
+  padding: 0.5rem 0.7rem;
+  text-align: center;
+  color: var(--cream-soft);
+  font-family: var(--serif-body);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  background: var(--guest-bubble);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+
+.account-bar__hint::before,
+.account-bar__hint::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+}
+
+.account-bar__hint::before {
+  top: -8px;
+  border-bottom: 8px solid var(--line);
+}
+
+.account-bar__hint::after {
+  top: -7px;
+  border-left-width: 7px;
+  border-right-width: 7px;
+  border-bottom: 7px solid var(--guest-bubble);
 }
 
 .account-bar__btn {
@@ -177,7 +233,11 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(1.5rem, 4vh, 3rem) clamp(1.25rem, 4vw, 2rem);
+  /* Extra top space so the guest caption under Sign in does not sit on the title. */
+  padding:
+    max(5.6rem, calc(env(safe-area-inset-top, 0px) + 5.1rem))
+    clamp(1.25rem, 4vw, 2rem)
+    clamp(1.5rem, 4vh, 3rem);
   animation: fade-in 0.7s ease both;
 }
 
@@ -1272,6 +1332,12 @@ button,
   color: #d99;
 }
 
+@media (min-width: 481px) {
+  .view {
+    padding-right: max(10.75rem, calc(env(safe-area-inset-right, 0px) + 10.5rem));
+  }
+}
+
 /* --------------------------------------------------------------------------- */
 /* Responsive - MOBILE (targets iPhone widths ~390px)                          */
 /* --------------------------------------------------------------------------- */
@@ -1298,6 +1364,30 @@ button,
     min-height: 100dvh;
     overflow: visible;
     justify-content: flex-start;
+    padding-top: max(7.1rem, calc(env(safe-area-inset-top, 0px) + 6.6rem));
+  }
+
+  .account-bar {
+    left: max(0.65rem, env(safe-area-inset-left, 0px));
+    right: max(0.65rem, env(safe-area-inset-right, 0px));
+    align-items: stretch;
+  }
+
+  .account-bar__signed-out {
+    width: 100%;
+    max-width: none;
+  }
+
+  .account-bar__hint {
+    width: auto;
+    min-width: 0;
+  }
+
+  .account-bar__hint::before,
+  .account-bar__hint::after {
+    left: auto;
+    right: 4.15rem;
+    transform: none;
   }
 
   /* Shelf: keep all volumes on one plank, fitting four across */

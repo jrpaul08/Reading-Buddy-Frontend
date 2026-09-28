@@ -12,16 +12,23 @@ function AccountControls() {
   return (
     <div className="account-bar">
       <Show when="signed-out">
-        <SignInButton mode="modal">
-          <button type="button" className="account-bar__btn">
-            Sign in
-          </button>
-        </SignInButton>
-        <SignUpButton mode="modal">
-          <button type="button" className="account-bar__btn account-bar__btn--primary">
-            Sign up
-          </button>
-        </SignUpButton>
+        <div className="account-bar__signed-out">
+          <div className="account-bar__buttons">
+            <SignInButton mode="modal">
+              <button type="button" className="account-bar__btn">
+                Sign in
+              </button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <button type="button" className="account-bar__btn account-bar__btn--primary">
+                Sign up
+              </button>
+            </SignUpButton>
+          </div>
+          <p className="account-bar__hint">
+            Your book notes only last for this visit. Sign in to keep them.
+          </p>
+        </div>
       </Show>
       <Show when="signed-in">
         <UserButton />

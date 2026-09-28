@@ -7,6 +7,8 @@ interface ImportMetaEnv {
   readonly VITE_LIST_URL?: string;
   readonly VITE_GLOSSARY_ADD_URL?: string;
   readonly VITE_GLOSSARY_LIST_URL?: string;
+  readonly VITE_SAVE_POSITION_URL?: string;
+  readonly VITE_GET_POSITION_URL?: string;
   readonly VITE_CLERK_PUBLISHABLE_KEY?: string;
   readonly VITE_MOCK?: string;
 }

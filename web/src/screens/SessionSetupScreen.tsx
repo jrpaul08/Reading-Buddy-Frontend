@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Navigate } from "react-router-dom";
+import { useAuthTick } from "../components/AuthBridge";
 import { BOOKS_BY_ID, coverUrl } from "../data/books";
+import {
+  getReadingPosition,
+  saveReadingPosition,
+} from "../lib/readingPosition";
 import { useSession } from "../session/SessionContext";
 
 /* VIEW 2: session setup. Book id comes from the URL (/setup/:bookId). */
@@ -12,6 +17,32 @@ export default function SessionSetupScreen() {
 
   const [chapter, setChapter] = useState(1);
   const [notesOpen, setNotesOpen] = useState(false);
+  const [positionReady, setPositionReady] = useState(false);
+  const authTick = useAuthTick();
+
+  useEffect(() => {
+    if (!book) return;
+    let cancelled = false;
+    setPositionReady(false);
+    getReadingPosition(book.id)
+      .then((pos) => {
+        if (cancelled) return;
+        if (typeof pos.chapter === "number") {
+          setChapter(Math.min(Math.max(1, pos.chapter), book.chapters));
+        } else {
+          setChapter(1);
+        }
+      })
+      .catch(() => {
+        /* Keep chapter 1 if the backend has nothing or the call fails. */
+      })
+      .finally(() => {
+        if (!cancelled) setPositionReady(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [book, authTick]);
 
   useEffect(() => {
     if (!notesOpen) return;
@@ -25,8 +56,13 @@ export default function SessionSetupScreen() {
   // Unknown/mistyped book id: bounce back to the shelf rather than error.
   if (!book) return <Navigate to="/" replace />;
 
-  const changeChapter = (next: number) =>
-    setChapter(Math.min(Math.max(1, next), book.chapters));
+  const changeChapter = (next: number) => {
+    const clamped = Math.min(Math.max(1, next), book.chapters);
+    setChapter(clamped);
+    if (positionReady) {
+      void saveReadingPosition({ book_id: book.id, chapter: clamped });
+    }
+  };
 
   const beginReading = () => {
     start(book, chapter);
@@ -94,7 +130,12 @@ export default function SessionSetupScreen() {
         </div>
 
         <div className="setup__actions">
-          <button type="button" className="btn-primary" onClick={beginReading}>
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={beginReading}
+            disabled={!positionReady}
+          >
             Begin Reading
           </button>
           <button

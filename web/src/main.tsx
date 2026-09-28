@@ -8,6 +8,7 @@ import { getSessionId } from "./lib/sessionId";
 import { addToGlossary, listGlossary } from "./lib/glossary";
 import { isGlossaryCommand } from "./lib/glossaryCommand";
 import { listSaved, savePair } from "./lib/saved";
+import { clerkAppearance } from "./lib/clerkAppearance";
 import "./styles/global.css";
 
 getSessionId();
@@ -36,7 +37,11 @@ const app = (
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     {clerkKey ? (
-      <ClerkProvider publishableKey={clerkKey} afterSignOutUrl="/">
+      <ClerkProvider
+        publishableKey={clerkKey}
+        afterSignOutUrl="/"
+        appearance={clerkAppearance}
+      >
         {app}
       </ClerkProvider>
     ) : (

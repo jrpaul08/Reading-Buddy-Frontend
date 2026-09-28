@@ -67,6 +67,101 @@ body {
   color: var(--gold);
 }
 
+/* Clerk sign-in / sign-up modal and account popover */
+.cl-modalBackdrop {
+  background: rgba(12, 8, 6, 0.78) !important;
+}
+
+.cl-modalContent,
+.cl-card,
+.cl-cardBox,
+.cl-rootBox,
+.cl-userButtonPopoverCard,
+.cl-userButtonPopoverMain {
+  background: #2a1c15 !important;
+  color: var(--cream) !important;
+  font-family: var(--serif-body) !important;
+  border: 1px solid var(--line) !important;
+  box-shadow: 0 22px 40px rgba(0, 0, 0, 0.55) !important;
+  border-radius: 12px !important;
+}
+
+.cl-headerTitle,
+.cl-userButtonPopoverActionButtonText {
+  font-family: var(--serif-display) !important;
+  color: var(--gold) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em !important;
+}
+
+.cl-headerSubtitle,
+.cl-formFieldLabel,
+.cl-dividerText,
+.cl-footerActionText,
+.cl-identityPreviewText,
+.cl-formFieldInfoText,
+.cl-formFieldSuccessText,
+.cl-formFieldHintText {
+  color: var(--cream-soft) !important;
+  font-family: var(--serif-body) !important;
+}
+
+.cl-formFieldInput,
+.cl-otpCodeFieldInput,
+.cl-phoneInputBox,
+.cl-selectButton {
+  background: #211611 !important;
+  color: var(--cream) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 8px !important;
+  font-family: var(--serif-body) !important;
+}
+
+.cl-formFieldInput:focus,
+.cl-otpCodeFieldInput:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 1px var(--gold) !important;
+}
+
+.cl-formButtonPrimary,
+.cl-alternativeMethodsBlockButton {
+  background: var(--gold) !important;
+  color: #2c1a12 !important;
+  font-family: var(--serif-display) !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  border: none !important;
+  border-radius: 8px !important;
+}
+
+.cl-formButtonPrimary:hover,
+.cl-alternativeMethodsBlockButton:hover {
+  background: var(--gold-soft) !important;
+}
+
+.cl-socialButtonsBlockButton,
+.cl-button,
+.cl-menuButton {
+  background: transparent !important;
+  color: var(--cream) !important;
+  border: 1px solid var(--line) !important;
+  font-family: var(--serif-body) !important;
+}
+
+.cl-footerActionLink,
+.cl-link,
+.cl-identityPreviewEditButton {
+  color: var(--gold) !important;
+}
+
+.cl-dividerLine {
+  background: var(--line) !important;
+}
+
+.cl-userButtonPopoverActionButton:hover {
+  background: rgba(211, 154, 68, 0.12) !important;
+}
+
 /* --------------------------------------------------------------------------- */
 /* View switching                                                              */
 /* --------------------------------------------------------------------------- */

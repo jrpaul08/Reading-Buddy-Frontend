@@ -1,12 +1,35 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { BOOKS_BY_ID } from "../data/books";
-import { questionsForBook } from "../data/questions";
+import { listSaved, type SavedResponse } from "../lib/saved";
 
 export default function QuestionsScreen() {
   const { bookId } = useParams();
   const navigate = useNavigate();
   const book = bookId ? BOOKS_BY_ID[bookId] : undefined;
-  const items = bookId ? questionsForBook(bookId) : [];
+  const [items, setItems] = useState<SavedResponse[] | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    if (!bookId) return;
+    let cancelled = false;
+    setFailed(false);
+    setItems(null);
+    listSaved()
+      .then((all) => {
+        if (cancelled) return;
+        const forBook = all
+          .filter((item) => item.book_id === bookId)
+          .sort((a, b) => (a.saved_at < b.saved_at ? 1 : -1));
+        setItems(forBook);
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [bookId]);
 
   if (!book) return <Navigate to="/" replace />;
 
@@ -20,11 +43,18 @@ export default function QuestionsScreen() {
       </div>
 
       <div className="questions__list">
-        {items.length === 0 ? (
+        {failed ? (
+          <p className="questions__empty">Couldn't load your notes.</p>
+        ) : items === null ? (
+          <p className="questions__empty">Loading your notes…</p>
+        ) : items.length === 0 ? (
           <p className="questions__empty">No questions saved for this book yet.</p>
         ) : (
-          items.map((item) => (
-            <details key={item.id} className="question-leaf">
+          items.map((item, index) => (
+            <details
+              key={`${item.saved_at}-${item.question}-${index}`}
+              className="question-leaf"
+            >
               <summary>
                 <span className="question-leaf__chapter">Chapter {item.chapter}</span>
                 {item.question}

@@ -1332,12 +1332,6 @@ button,
   color: #d99;
 }
 
-@media (min-width: 481px) {
-  .view {
-    padding-right: max(10.75rem, calc(env(safe-area-inset-right, 0px) + 10.5rem));
-  }
-}
-
 /* --------------------------------------------------------------------------- */
 /* Responsive - MOBILE (targets iPhone widths ~390px)                          */
 /* --------------------------------------------------------------------------- */
